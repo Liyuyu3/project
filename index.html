@@ -1785,6 +1785,14 @@
       请核对以下智能拆解结果。<b>点击字段可直接编辑</b>，字段右下角的 ✨ 按钮可单独让 AI 重新优化该字段。
       如果理解有偏差，可以点"取消"修改输入，或继续点"确认生成"按当前理解继续。
     </div>
+    <div id="originalInputCompare" style="display: none; margin-bottom: 14px; padding: 10px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
+      <div style="font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 6px;">📝 你的原始输入 → AI 理解结果</div>
+      <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; font-size: 12px; line-height: 1.6;">
+        <div style="color: #78350f; background: #fef3c7; padding: 6px 10px; border-radius: 6px;" id="originalInputText"></div>
+        <span style="color: #d97706; font-size: 16px;">→</span>
+        <div style="color: #065f46; background: #d1fae5; padding: 6px 10px; border-radius: 6px;" id="aiUnderstandingText"></div>
+      </div>
+    </div>
     <div class="requirement-grid" id="requirementGrid"></div>
 
     <div style="margin-top: 18px; border-top: 1px solid var(--border); padding-top: 16px;">
@@ -1882,6 +1890,61 @@
       <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
         <span style="font-size: 12px; color: var(--text-muted);" id="menuCount">0 个 SKU</span>
         <button class="btn-cancel" onclick="resetMenu()" style="margin-left: auto; padding: 6px 12px; font-size: 12px;">恢复示例菜单</button>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 8px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        店铺档案（用于区分不同商家的同类输入）
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+        配置店铺基本信息后，输入"招牌套餐""牛肉"等模糊描述时，系统会根据店铺品类和主营推荐更精准的结果。
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">店铺品类</label>
+          <select id="shopCategory" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;">
+            <option value="">请选择</option>
+            <option value="奶茶甜品">奶茶甜品</option>
+            <option value="快餐简餐">快餐简餐</option>
+            <option value="川湘菜">川湘菜</option>
+            <option value="粤菜茶餐厅">粤菜茶餐厅</option>
+            <option value="火锅烧烤">火锅烧烤</option>
+            <option value="面食米线">面食米线</option>
+            <option value="日韩料理">日韩料理</option>
+            <option value="西餐">西餐</option>
+            <option value="生鲜水果">生鲜水果</option>
+            <option value="烘焙面包">烘焙面包</option>
+            <option value="小吃夜宵">小吃夜宵</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">价格带</label>
+          <select id="shopPriceRange" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;">
+            <option value="">请选择</option>
+            <option value="平价">平价（人均 20 元以下）</option>
+            <option value="中档">中档（人均 20-50 元）</option>
+            <option value="中高端">中高端（人均 50-100 元）</option>
+            <option value="高端">高端（人均 100 元以上）</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom: 8px;">
+        <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">主营菜品（用逗号分隔，如：珍珠奶茶,杨枝甘露,柠檬茶）</label>
+        <input type="text" id="shopMainDishes" placeholder="如：珍珠奶茶,杨枝甘露,柠檬茶" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;" />
+      </div>
+      <div>
+        <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">目标人群</label>
+        <select id="shopTargetAudience" style="width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;">
+          <option value="">请选择</option>
+          <option value="学生">学生</option>
+          <option value="上班族">上班族</option>
+          <option value="家庭">家庭</option>
+          <option value="年轻人">年轻人</option>
+          <option value="全年龄">全年龄</option>
+        </select>
       </div>
     </div>
 
@@ -2622,6 +2685,15 @@
       }
     }
 
+    // 4.5 食材形态歧义（如"牛肉"可能是生鲜也可能是成品）
+    if (needsFoodFormClarification(text)) {
+      return {
+        level: 'medium', type: 'food_form',
+        message: `「${text}」可能是生鲜食材，也可能是成品菜品，直接生成容易跑偏。`,
+        hint: '请选择你想要的形态：',
+      };
+    }
+
     // 5. 过短输入（没选用途时）
     if (text.length <= SHORT_OVERRIDE && !purpose) {
       return {
@@ -2652,6 +2724,72 @@
       { subject: '招牌菜组合套餐', purposeKey: 'signature', reason: '突出门店主打商品' },
     ],
   };
+
+  // 品类子形态快捷选项：输入泛品类词时展示具体子类型供点选
+  const CATEGORY_SUBTYPES = {
+    '奶茶': [
+      { label: '珍珠奶茶', desc: '经典珍珠' },
+      { label: '杨枝甘露', desc: '芒果西柚' },
+      { label: '柠檬茶', desc: '清爽柠檬' },
+      { label: '烤奶', desc: '焦香烤奶' },
+      { label: '纯茶', desc: '原叶纯茶' },
+    ],
+    '牛肉': [
+      { label: '牛肉饭', desc: '成品菜品', form: '成品' },
+      { label: '牛肉面', desc: '成品菜品', form: '成品' },
+      { label: '生鲜牛肉', desc: '生鲜食材', form: '生鲜' },
+      { label: '牛排', desc: '半成品/成品', form: '半成品' },
+    ],
+    '鸡肉': [
+      { label: '炸鸡', desc: '成品菜品', form: '成品' },
+      { label: '白切鸡', desc: '成品菜品', form: '成品' },
+      { label: '鸡汤', desc: '成品菜品', form: '成品' },
+      { label: '生鲜鸡肉', desc: '生鲜食材', form: '生鲜' },
+    ],
+    '鱼': [
+      { label: '酸菜鱼', desc: '成品菜品', form: '成品' },
+      { label: '清蒸鱼', desc: '成品菜品', form: '成品' },
+      { label: '烤鱼', desc: '成品菜品', form: '成品' },
+      { label: '生鲜鱼', desc: '生鲜食材', form: '生鲜' },
+    ],
+    '套餐': [
+      { label: '单人套餐', desc: '一人食' },
+      { label: '双人套餐', desc: '两人分享' },
+      { label: '家庭套餐', desc: '多人聚餐' },
+    ],
+    '甜品': [
+      { label: '冰粉', desc: '清凉冰粉' },
+      { label: '蛋糕', desc: '生日/甜品' },
+      { label: '烧仙草', desc: '闽南甜品' },
+      { label: '杨枝甘露', desc: '芒果甜品' },
+    ],
+    '面': [
+      { label: '牛肉面', desc: '中式红烧' },
+      { label: '炸酱面', desc: '北京风味' },
+      { label: '担担面', desc: '川味麻辣' },
+      { label: '日式拉面', desc: '日式豚骨' },
+    ],
+  };
+
+  // 食材形态词：输入这些词时需要追问是生鲜还是成品
+  const FOOD_FORM_WORDS = ['牛肉', '鸡肉', '鱼', '猪肉', '羊肉', '虾', '蟹', '鸭', '鹅', '排骨', '五花肉', '牛排'];
+
+  // 查找品类子形态
+  function lookupCategorySubtypes(text) {
+    const t = (text || '').trim();
+    if (!t) return null;
+    if (CATEGORY_SUBTYPES[t]) return { key: t, subtypes: CATEGORY_SUBTYPES[t] };
+    for (const [key, subtypes] of Object.entries(CATEGORY_SUBTYPES)) {
+      if (t.includes(key) || key.includes(t)) return { key, subtypes };
+    }
+    return null;
+  }
+
+  // 判断是否需要追问食材形态
+  function needsFoodFormClarification(text) {
+    const t = (text || '').trim();
+    return FOOD_FORM_WORDS.some(w => t === w || t.startsWith(w)) && !t.includes('饭') && !t.includes('面') && !t.includes('汤') && !t.includes('菜');
+  }
 
   function detectPurposeFromText(text, purpose) {
     const t = text || '';
@@ -2741,12 +2879,17 @@
 
   function inferMerchantIntent(input, purpose, menuCandidates = []) {
     const purposeMeta = detectPurposeFromText(input, purpose);
+    const shopProfile = getShopProfile();
     const suggestions = buildIntentSuggestions(input, purposeMeta, menuCandidates);
     const dictHit = lookupVisualDict(input);
     const topMenu = menuCandidates.find(item => (item._matchScore || 0) > 0);
-    const subject = dictHit
+    let subject = dictHit
       ? ((input || '').includes('招牌') ? `招牌${dictHit.name}` : dictHit.name)
       : (topMenu?.name || suggestions[0]?.subject || cleanSubjectFromSentence(input));
+    // 如果有店铺档案，在主体前加上店铺品类上下文
+    if (shopProfile.category && subject) {
+      subject = subject;
+    }
     const marketingGoal = detectMarketingGoal(input, purposeMeta);
     const placement = detectPlacement(purposeMeta);
     const style = detectStyleIntent(input, subject, purposeMeta);
@@ -2767,6 +2910,11 @@
       avoid,
       suggestions,
     };
+    // 注入店铺档案上下文
+    if (shopProfile.category) draft.shopCategory = shopProfile.category;
+    if (shopProfile.priceRange) draft.shopPriceRange = shopProfile.priceRange;
+    if (shopProfile.mainDishes) draft.shopMainDishes = shopProfile.mainDishes;
+    if (shopProfile.targetAudience) draft.shopTargetAudience = shopProfile.targetAudience;
     if (style) draft.style = style;
     if (background) draft.background = background;
     return draft;
@@ -2790,6 +2938,7 @@
         (clarity.type === 'short' || clarity.type === 'generic' || clarity.type === 'purpose_unclear')
         && Array.isArray(menuCandidates) && menuCandidates.length > 0
       );
+      const subtypeInfo = (clarity.type === 'short' || clarity.type === 'generic') ? lookupCategorySubtypes(prompt) : null;
 
       titleEl.textContent = (clarity.type === 'purpose_unclear' || clarity.type === 'short')
         ? '⚠️ 输入需要确认'
@@ -2854,6 +3003,107 @@
         });
       }
 
+      // 品类子形态快捷选项（short/generic 时展示）
+      if (subtypeInfo) {
+        const subtypeSection = document.createElement('div');
+        subtypeSection.className = 'menu-candidates';
+        const chips = subtypeInfo.subtypes.map(st => {
+          const formTag = st.form ? `<span class="menu-candidate-tag match">${escapeHtml(st.form)}</span>` : '';
+          return `
+            <button type="button" class="menu-candidate-btn" data-subtype-label="${escapeHtml(st.label)}">
+              <div class="menu-candidate-name">${escapeHtml(st.label)}</div>
+              <div class="menu-candidate-meta">${escapeHtml(st.desc)} ${formTag}</div>
+            </button>
+          `;
+        }).join('');
+        subtypeSection.innerHTML = `
+          <div class="menu-candidates-label">
+            🏷️ 或者选择「${escapeHtml(subtypeInfo.key)}」的具体类型
+          </div>
+          <div class="menu-candidates-grid">${chips}</div>
+        `;
+        const insertAfter = showMenuSection ? document.querySelector('#clarifyModal .menu-candidates') : msgEl;
+        insertAfter.parentNode.insertBefore(subtypeSection, insertAfter.nextSibling);
+        subtypeSection.querySelectorAll('.menu-candidate-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const label = btn.dataset.subtypeLabel;
+            document.getElementById('promptInput').value = label;
+            updateCharCount();
+            if (!selectedPurpose) selectPurpose('product');
+            resolve({ action: 'proceed' });
+          });
+        });
+      }
+
+      // 商品名称补充输入框（purpose_unclear 时展示）
+      if (clarity.type === 'purpose_unclear' || clarity.type === 'short') {
+        const inputSection = document.createElement('div');
+        inputSection.style.cssText = 'margin-top: 12px; padding: 10px 14px; background: #f9fafb; border: 1px solid var(--border); border-radius: 8px;';
+        inputSection.innerHTML = `
+          <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">✏️ 或者直接输入商品名称</div>
+          <div style="display: flex; gap: 6px;">
+            <input type="text" id="clarifyProductName" placeholder="如：珍珠奶茶、红烧牛肉面..." style="flex: 1; padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;" />
+            <button type="button" id="clarifyProductNameBtn" style="background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 0 14px; font-size: 12px; cursor: pointer;">确定</button>
+          </div>
+        `;
+        const lastInserted = subtypeInfo ? document.querySelector('#clarifyModal .menu-candidates:last-of-type') : (showMenuSection ? document.querySelector('#clarifyModal .menu-candidates') : msgEl);
+        lastInserted.parentNode.insertBefore(inputSection, lastInserted.nextSibling);
+        document.getElementById('clarifyProductNameBtn').addEventListener('click', () => {
+          const val = document.getElementById('clarifyProductName').value.trim();
+          if (val) {
+            document.getElementById('promptInput').value = val;
+            updateCharCount();
+            if (!selectedPurpose) selectPurpose('product');
+            resolve({ action: 'proceed' });
+          }
+        });
+      }
+
+      // 食材形态追问（生鲜/成品）
+      if (clarity.type === 'food_form') {
+        const subtypeInfo = lookupCategorySubtypes(prompt);
+        if (subtypeInfo) {
+          const subtypeSection = document.createElement('div');
+          subtypeSection.className = 'menu-candidates';
+          const chips = subtypeInfo.subtypes.map(st => {
+            const formTag = st.form ? `<span class="menu-candidate-tag match">${escapeHtml(st.form)}</span>` : '';
+            return `
+              <button type="button" class="menu-candidate-btn" data-subtype-label="${escapeHtml(st.label)}">
+                <div class="menu-candidate-name">${escapeHtml(st.label)}</div>
+                <div class="menu-candidate-meta">${escapeHtml(st.desc)} ${formTag}</div>
+              </button>
+            `;
+          }).join('');
+          subtypeSection.innerHTML = `
+            <div class="menu-candidates-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              选择你想要的「${escapeHtml(subtypeInfo.key)}」形态
+            </div>
+            <div class="menu-candidates-grid">${chips}</div>
+          `;
+          msgEl.parentNode.insertBefore(subtypeSection, msgEl.nextSibling);
+          subtypeSection.querySelectorAll('.menu-candidate-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const label = btn.dataset.subtypeLabel;
+              document.getElementById('promptInput').value = label;
+              updateCharCount();
+              if (!selectedPurpose) selectPurpose('product');
+              resolve({ action: 'proceed' });
+            });
+          });
+        }
+        // 通用形态选项
+        addOpt('🥩', '生鲜食材', '展示原始食材，适合生鲜店/菜市场', () => {
+          resolve({ action: 'useIntentSuggestion', suggestion: { subject: prompt + '（生鲜食材）', purposeKey: 'product', reason: '生鲜食材展示' } });
+        });
+        addOpt('🍽️', '成品菜品', '展示做好的菜品，适合外卖/堂食', () => {
+          resolve({ action: 'useIntentSuggestion', suggestion: { subject: prompt + '（成品菜品）', purposeKey: 'product', reason: '成品菜品展示' } });
+        });
+        addOpt('📦', '半成品/包装', '展示包装或半加工状态', () => {
+          resolve({ action: 'useIntentSuggestion', suggestion: { subject: prompt + '（半成品包装）', purposeKey: 'product', reason: '半成品/包装展示' } });
+        });
+        proceedBtn.style.display = 'none';
+      } else
       if (clarity.type === 'disambiguation') {
         const word = clarity.word;
         const info = clarity.info;
@@ -3046,6 +3296,16 @@
     // 在需求对象上记录当前尺寸（用户切换尺寸时会被改）
     if (!req.size) {
       req.size = document.getElementById('sizeSelect').value;
+    }
+
+    // 显示原始输入 vs AI 理解对比
+    const compareEl = document.getElementById('originalInputCompare');
+    if (compareEl && req.userInput) {
+      document.getElementById('originalInputText').textContent = req.userInput;
+      document.getElementById('aiUnderstandingText').textContent = `${req.mainSubject || ''} · ${req.imageType || ''}`;
+      compareEl.style.display = 'block';
+    } else if (compareEl) {
+      compareEl.style.display = 'none';
     }
 
     const fields = [
@@ -3875,6 +4135,13 @@
     document.getElementById('compilePromptInput').value = savedCompilePrompt || DEFAULT_COMPILE_PROMPT;
     document.getElementById('optimizeApiKeyInput').value = savedOptimizeKey || '';
 
+    // 加载店铺档案
+    const shopProfile = getShopProfile();
+    document.getElementById('shopCategory').value = shopProfile.category || '';
+    document.getElementById('shopPriceRange').value = shopProfile.priceRange || '';
+    document.getElementById('shopMainDishes').value = shopProfile.mainDishes || '';
+    document.getElementById('shopTargetAudience').value = shopProfile.targetAudience || '';
+
     updateRequirementPromptLength();
     updateCompilePromptLength();
     renderMenuList();
@@ -3932,8 +4199,33 @@
       localStorage.removeItem('prompt_optimizer_api_key');
     }
 
+    // 保存店铺档案
+    const shopProfile = {
+      category: document.getElementById('shopCategory').value,
+      priceRange: document.getElementById('shopPriceRange').value,
+      mainDishes: document.getElementById('shopMainDishes').value.trim(),
+      targetAudience: document.getElementById('shopTargetAudience').value,
+    };
+    setShopProfile(shopProfile);
+
     closeAdminPanel();
     showToast('配置已保存', 'success');
+  }
+
+  // ── 店铺档案 ──────────────────────────────────────
+  const DEFAULT_SHOP_PROFILE = { category: '', priceRange: '', mainDishes: '', targetAudience: '' };
+
+  function getShopProfile() {
+    try {
+      const raw = localStorage.getItem('shop_profile');
+      if (!raw) return { ...DEFAULT_SHOP_PROFILE };
+      const obj = JSON.parse(raw);
+      return { ...DEFAULT_SHOP_PROFILE, ...obj };
+    } catch { return { ...DEFAULT_SHOP_PROFILE }; }
+  }
+
+  function setShopProfile(profile) {
+    localStorage.setItem('shop_profile', JSON.stringify(profile));
   }
 
   function toggleOptimizeKeyVisibility() {
