@@ -2838,7 +2838,8 @@
     }
 
     // 4.5 食材形态歧义（如"牛肉"可能是生鲜也可能是成品）
-    if (needsFoodFormClarification(text)) {
+    // 如果输入已包含形态标记（如"牛肉（生鲜食材）"），说明用户已明确，不再拦截
+    if (needsFoodFormClarification(text) && !/（生鲜食材）|（成品菜品）|（半成品包装）/.test(text)) {
       return {
         level: 'medium', type: 'food_form',
         message: `「${text}」可能是生鲜食材，也可能是成品菜品，直接生成容易跑偏。`,
@@ -3125,9 +3126,17 @@
     const suggestions = buildIntentSuggestions(input, purposeMeta, menuCandidates);
     const dictHit = lookupVisualDict(input);
     const topMenu = menuCandidates.find(item => (item._matchScore || 0) > 0);
-    let subject = dictHit
-      ? ((input || '').includes('招牌') ? `招牌${dictHit.name}` : dictHit.name)
-      : (topMenu?.name || suggestions[0]?.subject || cleanSubjectFromSentence(input));
+    // 检测用户是否已通过澄清弹窗明确了食材形态（生鲜/成品/半成品）
+    const hasFoodFormHint = /（生鲜食材）|（成品菜品）|（半成品包装）/.test(input || '');
+    let subject;
+    if (hasFoodFormHint) {
+      // 用户已明确形态，直接用输入作为主体，不被菜单覆盖
+      subject = input.trim();
+    } else {
+      subject = dictHit
+        ? ((input || '').includes('招牌') ? `招牌${dictHit.name}` : dictHit.name)
+        : (topMenu?.name || suggestions[0]?.subject || cleanSubjectFromSentence(input));
+    }
     // 如果有店铺档案，在主体前加上店铺品类上下文
     if (shopProfile.category && subject) {
       subject = subject;
@@ -4101,6 +4110,21 @@
     if (req.comboItems && req.comboItems.length > 0) {
       payload._comboItems = req.comboItems.filter(item => item.name && item.name.trim());
       payload._comboInstruction = '这是一张套餐图，必须严格按以下结构展示：每个菜品都要清晰可见，数量必须准确，主菜居中突出，配菜和饮品围绕排列，整体构图整齐有层次感。';
+    }
+
+    // 注入食材形态约束（防止 AI 将生鲜食材改成成品菜品）
+    const subjectText = (req.mainSubject || '') + (req.userInput || '');
+    if (/（生鲜食材）|生鲜/.test(subjectText)) {
+      payload._foodFormConstraint = '主体是生鲜食材（生的、未烹饪的），必须展示原始食材形态，禁止生成成品菜品、烹饪后的菜肴、装盘的菜品。画面应突出食材的新鲜度、色泽和质感。';
+      if (!payload.avoid || payload.avoid === '未指定') {
+        payload.avoid = '成品菜品、烹饪后的菜肴、装盘摆盘、熟食';
+      } else {
+        payload.avoid += '，成品菜品、烹饪后的菜肴、装盘摆盘、熟食';
+      }
+    } else if (/（成品菜品）/.test(subjectText)) {
+      payload._foodFormConstraint = '主体是成品菜品（已烹饪、装盘的），必须展示做好的菜品形态。';
+    } else if (/（半成品包装）/.test(subjectText)) {
+      payload._foodFormConstraint = '主体是半成品或包装状态，展示包装外观和品质感，不要展示生的或做好的菜品。';
     }
 
     // 注入菜品视觉词典
