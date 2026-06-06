@@ -196,6 +196,134 @@
       opacity: 0;
       transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
     }
+    .quick-tag-section {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+    .quick-tag-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .quick-tag-row:last-child { margin-bottom: 0; }
+    .quick-tag-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 40px;
+      flex-shrink: 0;
+    }
+    .quick-tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--bg-soft);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .quick-tag-chip:hover {
+      border-color: var(--accent-mid);
+      background: var(--accent-light);
+    }
+    .quick-tag-chip.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .conflict-warning {
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: #991b1b;
+    }
+    .conflict-warning-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .conflict-option {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border: 1px solid #fca5a5;
+      border-radius: 14px;
+      font-size: 11px;
+      color: #991b1b;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin: 2px 4px 2px 0;
+    }
+    .conflict-option:hover { background: #fef2f2; border-color: #ef4444; }
+    .conflict-option.active { background: #fecaca; border-color: #ef4444; font-weight: 600; }
+    .combo-form-section {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+    .combo-form-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 60px;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .combo-form-row label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .combo-form-row input, .combo-form-row select {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .combo-form-row input:focus, .combo-form-row select:focus {
+      outline: none;
+      border-color: var(--accent-mid);
+      box-shadow: 0 0 0 2px var(--accent-light);
+    }
+    .combo-add-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 12px;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .combo-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .combo-item-remove {
+      width: 20px; height: 20px;
+      border: none; background: #fef2f2;
+      border-radius: 4px; cursor: pointer;
+      color: #ef4444; font-size: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .combo-item-remove:hover { background: #fecaca; }
+
     .requirement-item:hover .requirement-ai-btn {
       opacity: 1;
     }
@@ -1795,6 +1923,30 @@
     </div>
     <div class="requirement-grid" id="requirementGrid"></div>
 
+    <!-- 菜系和做法快捷标签 -->
+    <div class="quick-tag-section" id="quickTagSection">
+      <div class="quick-tag-row">
+        <span class="quick-tag-label">菜系</span>
+        <div id="cuisineTags"></div>
+      </div>
+      <div class="quick-tag-row">
+        <span class="quick-tag-label">做法</span>
+        <div id="cookingMethodTags"></div>
+      </div>
+    </div>
+
+    <!-- 套餐结构化输入表单 -->
+    <div class="combo-form-section" id="comboFormSection" style="display: none;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        🍱 套餐内容（结构化填写，确保数量和布局准确）
+      </div>
+      <div id="comboFormItems"></div>
+      <button type="button" class="combo-add-btn" onclick="addComboItem()">+ 添加一项</button>
+    </div>
+
+    <!-- 冲突检测警告 -->
+    <div class="conflict-warning" id="conflictWarning" style="display: none;"></div>
+
     <div style="margin-top: 18px; border-top: 1px solid var(--border); padding-top: 16px;">
       <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -2791,6 +2943,96 @@
     return FOOD_FORM_WORDS.some(w => t === w || t.startsWith(w)) && !t.includes('饭') && !t.includes('面') && !t.includes('汤') && !t.includes('菜');
   }
 
+  // 菜系快捷标签
+  const CUISINE_TAGS = [
+    { label: '中式', value: '中式' },
+    { label: '川湘', value: '川湘菜' },
+    { label: '粤式', value: '粤式' },
+    { label: '日式', value: '日式' },
+    { label: '韩式', value: '韩式' },
+    { label: '西式', value: '西式' },
+    { label: '东南亚', value: '东南亚' },
+    { label: '地方特色', value: '地方特色' },
+  ];
+
+  // 做法快捷标签
+  const COOKING_METHOD_TAGS = [
+    { label: '红烧', value: '红烧' },
+    { label: '清蒸', value: '清蒸' },
+    { label: '爆炒', value: '爆炒' },
+    { label: '炖煮', value: '炖煮' },
+    { label: '烧烤', value: '烧烤' },
+    { label: '油炸', value: '油炸' },
+    { label: '凉拌', value: '凉拌' },
+    { label: '煎制', value: '煎制' },
+    { label: '卤制', value: '卤制' },
+    { label: '汤底', value: '汤底' },
+  ];
+
+  // 冲突检测规则
+  const CONFLICT_RULES = [
+    {
+      id: 'white_bg_vs_atmosphere',
+      check: (req) => {
+        const bg = (req.background || '').toLowerCase();
+        const style = (req.style || '').toLowerCase();
+        const isWhiteBg = bg.includes('白底') || bg.includes('白色背景') || bg.includes('纯白') || bg.includes('白背景');
+        const hasAtmosphere = bg.includes('热闹') || bg.includes('烟火') || bg.includes('氛围') || bg.includes('场景')
+          || style.includes('烟火') || style.includes('热闹') || style.includes('氛围');
+        return isWhiteBg && hasAtmosphere;
+      },
+      message: '「白底」和「热闹氛围」可能冲突：白底商品图通常背景干净，而热闹氛围需要场景元素。',
+      options: [
+        { label: '优先白底干净', apply: (req) => { req.background = '纯白背景，商品居中，无场景元素'; req.style = (req.style || '').replace(/热闹|烟火|氛围/g, '简洁干净'); } },
+        { label: '优先氛围场景', apply: (req) => { req.background = req.background.replace(/白底|白色背景|纯白|白背景/g, '餐厅场景背景'); } },
+        { label: '两者兼顾', apply: (req) => { req.background = '浅色干净背景，微带烟火气氛围，主体突出'; } },
+      ],
+    },
+    {
+      id: 'product_vs_poster',
+      check: (req) => {
+        const imgType = (req.imageType || '').toLowerCase();
+        const bg = (req.background || '').toLowerCase();
+        const isProduct = imgType.includes('商品图') || imgType.includes('菜单配图');
+        const hasPosterLayout = bg.includes('预留') || bg.includes('文案') || bg.includes('标题区') || bg.includes('活动');
+        return isProduct && hasPosterLayout;
+      },
+      message: '「商品图」通常不需要预留文案区域，而你的描述中提到了文案/标题预留，可能更适合活动海报。',
+      options: [
+        { label: '按商品图生成', apply: (req) => { req.background = (req.background || '').replace(/预留.*?区域|文案.*?预留|标题区/g, ''); } },
+        { label: '改为活动海报', apply: (req) => { req.imageType = '促销海报'; } },
+      ],
+    },
+    {
+      id: 'dine_in_vs_takeout',
+      check: (req) => {
+        const subject = (req.mainSubject || '').toLowerCase();
+        const bg = (req.background || '').toLowerCase();
+        const style = (req.style || '').toLowerCase();
+        const wantsTakeout = subject.includes('外卖') || subject.includes('打包') || subject.includes('餐盒') || bg.includes('外卖') || bg.includes('打包') || bg.includes('餐盒');
+        const wantsDineIn = style.includes('堂食') || bg.includes('堂食') || bg.includes('摆盘') || bg.includes('盘装');
+        return wantsTakeout && wantsDineIn;
+      },
+      message: '「外卖打包」和「堂食摆盘」是不同的展示形态，同时出现可能互相矛盾。',
+      options: [
+        { label: '外卖餐盒', apply: (req) => { req.mainSubject = (req.mainSubject || '').replace(/堂食|摆盘|盘装/g, '外卖餐盒'); req.background = (req.background || '').replace(/堂食|摆盘|盘装/g, '外卖包装'); } },
+        { label: '堂食摆盘', apply: (req) => { req.mainSubject = (req.mainSubject || '').replace(/外卖|打包|餐盒/g, '堂食摆盘'); req.background = (req.background || '').replace(/外卖|打包|餐盒/g, '堂食摆盘'); } },
+        { label: '品牌包装', apply: (req) => { req.mainSubject = (req.mainSubject || '').replace(/堂食|摆盘|外卖|打包/g, '品牌包装'); req.background = '干净有品质感的品牌包装展示'; } },
+      ],
+    },
+  ];
+
+  // 检测字段间冲突
+  function detectConflicts(req) {
+    const conflicts = [];
+    for (const rule of CONFLICT_RULES) {
+      try {
+        if (rule.check(req)) conflicts.push(rule);
+      } catch (e) {}
+    }
+    return conflicts;
+  }
+
   function detectPurposeFromText(text, purpose) {
     const t = text || '';
     if (purpose) return purpose;
@@ -3350,10 +3592,22 @@
         if (text) el.classList.remove('empty');
         // 改完顺手把 optimizedPrompt 重生成一次
         regenerateOptimizedPromptFromFields();
+        // 检测冲突
+        renderConflictWarning(pendingRequirement);
       });
     });
 
     document.getElementById('requirementPromptPreview').textContent = req.optimizedPrompt || '';
+
+    // 渲染菜系快捷标签
+    renderCuisineTags(req);
+    // 渲染做法快捷标签
+    renderCookingMethodTags(req);
+    // 渲染套餐结构化表单
+    renderComboForm(req);
+    // 检测冲突
+    renderConflictWarning(req);
+
     document.getElementById('requirementModal').classList.add('open');
     document.body.style.overflow = 'hidden';
     updateQuickSizeMeta();
@@ -3366,11 +3620,218 @@
     btn.textContent = '确认生成';
   }
 
+  // ── 菜系快捷标签 ──────────────────────────────────
+  function renderCuisineTags(req) {
+    const container = document.getElementById('cuisineTags');
+    if (!container) return;
+    const currentVal = (req.cuisine || '');
+    container.innerHTML = CUISINE_TAGS.map(tag =>
+      `<button type="button" class="quick-tag-chip ${currentVal === tag.value ? 'active' : ''}" data-cuisine="${tag.value}" onclick="selectCuisine('${tag.value}')">${tag.label}</button>`
+    ).join('');
+  }
+
+  function selectCuisine(value) {
+    if (!pendingRequirement) return;
+    if (pendingRequirement.cuisine === value) {
+      pendingRequirement.cuisine = '';
+    } else {
+      pendingRequirement.cuisine = value;
+    }
+    // 合并到 style 字段
+    mergeTagsToStyle();
+    renderCuisineTags(pendingRequirement);
+    regenerateOptimizedPromptFromFields();
+    renderConflictWarning(pendingRequirement);
+  }
+
+  // ── 做法快捷标签 ──────────────────────────────────
+  function renderCookingMethodTags(req) {
+    const container = document.getElementById('cookingMethodTags');
+    if (!container) return;
+    const currentVal = (req.cookingMethod || '');
+    container.innerHTML = COOKING_METHOD_TAGS.map(tag =>
+      `<button type="button" class="quick-tag-chip ${currentVal === tag.value ? 'active' : ''}" data-method="${tag.value}" onclick="selectCookingMethod('${tag.value}')">${tag.label}</button>`
+    ).join('');
+  }
+
+  function selectCookingMethod(value) {
+    if (!pendingRequirement) return;
+    if (pendingRequirement.cookingMethod === value) {
+      pendingRequirement.cookingMethod = '';
+    } else {
+      pendingRequirement.cookingMethod = value;
+    }
+    mergeTagsToStyle();
+    renderCookingMethodTags(pendingRequirement);
+    regenerateOptimizedPromptFromFields();
+    renderConflictWarning(pendingRequirement);
+  }
+
+  // 将菜系和做法合并到 style 和 mainSubject 字段
+  function mergeTagsToStyle() {
+    if (!pendingRequirement) return;
+    const parts = [];
+    if (pendingRequirement.cuisine) parts.push(pendingRequirement.cuisine);
+    if (pendingRequirement.cookingMethod) parts.push(pendingRequirement.cookingMethod + '风味');
+    if (parts.length > 0) {
+      const tagStr = parts.join('');
+      // 在 mainSubject 前加菜系/做法修饰
+      const subject = pendingRequirement.mainSubject || '';
+      // 更新 style 字段，追加菜系/做法
+      const existingStyle = pendingRequirement.style || '';
+      if (!existingStyle.includes(pendingRequirement.cuisine || '___') && !existingStyle.includes(pendingRequirement.cookingMethod || '___')) {
+        pendingRequirement.style = tagStr + (existingStyle && existingStyle !== '未指定' ? ' ' + existingStyle : ' 商业摄影');
+      }
+      // 更新 style 字段的 UI
+      const styleEl = document.querySelector('.requirement-value[data-field="style"]');
+      if (styleEl) {
+        styleEl.textContent = pendingRequirement.style;
+        styleEl.classList.remove('empty');
+      }
+    }
+  }
+
+  // ── 套餐结构化表单 ──────────────────────────────────
+  const COMBO_ITEM_TYPES = [
+    { value: '主菜', label: '主菜' },
+    { value: '配菜', label: '配菜' },
+    { value: '米饭/主食', label: '米饭/主食' },
+    { value: '汤', label: '汤' },
+    { value: '饮品', label: '饮品' },
+    { value: '小食', label: '小食' },
+    { value: '酱料', label: '酱料' },
+  ];
+
+  function renderComboForm(req) {
+    const section = document.getElementById('comboFormSection');
+    if (!section) return;
+    const isCombo = (req.imageType || '').includes('套餐') || (req.mainSubject || '').includes('套餐');
+    section.style.display = isCombo ? 'block' : 'none';
+    if (!isCombo) return;
+
+    // 初始化套餐项
+    if (!req.comboItems || req.comboItems.length === 0) {
+      req.comboItems = [
+        { type: '主菜', name: '', quantity: 1 },
+        { type: '米饭/主食', name: '米饭', quantity: 2 },
+        { type: '饮品', name: '', quantity: 1 },
+      ];
+    }
+
+    updateComboFormItems(req);
+  }
+
+  function updateComboFormItems(req) {
+    const container = document.getElementById('comboFormItems');
+    if (!container || !req.comboItems) return;
+
+    container.innerHTML = req.comboItems.map((item, idx) => `
+      <div class="combo-form-row">
+        <select onchange="updateComboItem(${idx}, 'type', this.value)" style="font-size: 11px;">
+          ${COMBO_ITEM_TYPES.map(t => `<option value="${t.value}" ${item.type === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}
+        </select>
+        <input type="text" value="${escapeHtml(item.name)}" placeholder="菜品名称" onchange="updateComboItem(${idx}, 'name', this.value)" />
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <input type="number" value="${item.quantity}" min="1" max="10" style="width: 40px; text-align: center;" onchange="updateComboItem(${idx}, 'quantity', parseInt(this.value) || 1)" />
+          <button type="button" class="combo-item-remove" onclick="removeComboItem(${idx})" title="删除">×</button>
+        </div>
+      </div>
+    `).join('');
+
+    // 同步到 mainSubject
+    syncComboToSubject(req);
+  }
+
+  function addComboItem() {
+    if (!pendingRequirement || !pendingRequirement.comboItems) return;
+    pendingRequirement.comboItems.push({ type: '配菜', name: '', quantity: 1 });
+    updateComboFormItems(pendingRequirement);
+    regenerateOptimizedPromptFromFields();
+  }
+
+  function removeComboItem(idx) {
+    if (!pendingRequirement || !pendingRequirement.comboItems) return;
+    pendingRequirement.comboItems.splice(idx, 1);
+    updateComboFormItems(pendingRequirement);
+    regenerateOptimizedPromptFromFields();
+  }
+
+  function updateComboItem(idx, field, value) {
+    if (!pendingRequirement || !pendingRequirement.comboItems || !pendingRequirement.comboItems[idx]) return;
+    pendingRequirement.comboItems[idx][field] = value;
+    syncComboToSubject(pendingRequirement);
+    regenerateOptimizedPromptFromFields();
+  }
+
+  function syncComboToSubject(req) {
+    if (!req.comboItems || req.comboItems.length === 0) return;
+    const parts = req.comboItems
+      .filter(item => item.name && item.name.trim())
+      .map(item => item.quantity > 1 ? `${item.quantity}份${item.name}` : item.name);
+    if (parts.length > 0) {
+      const comboDesc = parts.join('、');
+      const baseSubject = (req.mainSubject || '').replace(/（[^）]*套餐[^）]*）/, '').replace(/\([^)]*套餐[^)]*\)/, '').trim();
+      req.mainSubject = `${baseSubject}（${comboDesc}）`;
+      const subjectEl = document.querySelector('.requirement-value[data-field="mainSubject"]');
+      if (subjectEl) {
+        subjectEl.textContent = req.mainSubject;
+        subjectEl.classList.remove('empty');
+      }
+    }
+  }
+
+  // ── 冲突检测 ──────────────────────────────────────
+  function renderConflictWarning(req) {
+    const container = document.getElementById('conflictWarning');
+    if (!container) return;
+    const conflicts = detectConflicts(req);
+    if (conflicts.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+    container.style.display = 'block';
+    container.innerHTML = conflicts.map((conflict, ci) => `
+      <div class="conflict-warning-title">⚠️ 检测到冲突</div>
+      <div style="margin-bottom: 8px;">${escapeHtml(conflict.message)}</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+        ${conflict.options.map((opt, oi) =>
+          `<button type="button" class="conflict-option" onclick="resolveConflict(${ci}, ${oi})">${escapeHtml(opt.label)}</button>`
+        ).join('')}
+      </div>
+    `).join('<div style="border-top: 1px solid #fecaca; margin: 8px 0;"></div>');
+  }
+
+  function resolveConflict(conflictIdx, optionIdx) {
+    if (!pendingRequirement) return;
+    const conflicts = detectConflicts(pendingRequirement);
+    if (!conflicts[conflictIdx]) return;
+    const option = conflicts[conflictIdx].options[optionIdx];
+    if (!option) return;
+    option.apply(pendingRequirement);
+    // 刷新所有字段 UI
+    ['imageType', 'mainSubject', 'style', 'background', 'avoid'].forEach(key => {
+      const el = document.querySelector(`.requirement-value[data-field="${key}"]`);
+      if (el) {
+        el.textContent = pendingRequirement[key] || '';
+        if (pendingRequirement[key] && pendingRequirement[key] !== '未指定') {
+          el.classList.remove('empty');
+        }
+      }
+    });
+    regenerateOptimizedPromptFromFields();
+    renderConflictWarning(pendingRequirement);
+    renderCuisineTags(pendingRequirement);
+    renderCookingMethodTags(pendingRequirement);
+    addDebugLog('冲突解决', `用户选择了"${option.label}"方案`, 'success');
+  }
+
   // 字段编辑后，重生成 optimizedPrompt（用 prompt 模板，不调 API）
   function regenerateOptimizedPromptFromFields() {
     if (!pendingRequirement) return;
     const r = pendingRequirement;
     const parts = [];
+    if (r.cuisine && r.cuisine !== '未指定') parts.push(r.cuisine);
+    if (r.cookingMethod && r.cookingMethod !== '未指定') parts.push(r.cookingMethod);
     if (r.mainSubject && r.mainSubject !== '未指定') parts.push(r.mainSubject);
     if (r.imageType && r.imageType !== '未指定') parts.push(r.imageType);
     if (r.marketingGoal && r.marketingGoal !== '未指定') parts.push(`目标是${r.marketingGoal}`);
@@ -3378,6 +3839,14 @@
     if (r.background && r.background !== '未指定') parts.push(`背景为${r.background}`);
     if (r.placement && r.placement !== '未指定') parts.push(`用于${r.placement}`);
     if (r.avoid && r.avoid !== '未指定') parts.push(`避免出现${r.avoid}`);
+    // 套餐结构化信息
+    if (r.comboItems && r.comboItems.length > 0) {
+      const comboDesc = r.comboItems
+        .filter(item => item.name && item.name.trim())
+        .map(item => item.quantity > 1 ? `${item.quantity}份${item.type}(${item.name})` : `${item.type}(${item.name})`)
+        .join('、');
+      if (comboDesc) parts.push(`套餐内容：${comboDesc}，每项清晰可见，数量准确，主菜居中突出`);
+    }
     const newPrompt = parts.join('，');
     r.optimizedPrompt = newPrompt;
     document.getElementById('requirementPromptPreview').textContent = newPrompt;
@@ -3624,7 +4093,15 @@
       style: req.style,
       background: req.background,
       avoid: req.avoid,
+      cuisine: req.cuisine,
+      cookingMethod: req.cookingMethod,
     });
+
+    // 注入套餐结构化数据
+    if (req.comboItems && req.comboItems.length > 0) {
+      payload._comboItems = req.comboItems.filter(item => item.name && item.name.trim());
+      payload._comboInstruction = '这是一张套餐图，必须严格按以下结构展示：每个菜品都要清晰可见，数量必须准确，主菜居中突出，配菜和饮品围绕排列，整体构图整齐有层次感。';
+    }
 
     // 注入菜品视觉词典
     const dictHit = lookupVisualDict(req.mainSubject) || lookupVisualDict(req.userInput);
