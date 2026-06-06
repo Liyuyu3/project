@@ -1,0 +1,4357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商家生图助手</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FAFAF7;
+      --surface: #FFFFFF;
+      --border: #E8E4DC;
+      --text-primary: #1C1917;
+      --text-secondary: #78716C;
+      --text-muted: #A8A29E;
+      --accent: #E8630A;
+      --accent-hover: #C95408;
+      --accent-light: #FEF0E6;
+      --accent-mid: #FDE0C4;
+      --shadow-sm: 0 1px 3px rgba(28,25,23,0.06), 0 1px 2px rgba(28,25,23,0.04);
+      --shadow-md: 0 4px 16px rgba(28,25,23,0.08), 0 2px 6px rgba(28,25,23,0.04);
+      --shadow-lg: 0 12px 40px rgba(28,25,23,0.12), 0 4px 12px rgba(28,25,23,0.06);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font-display: 'Noto Serif SC', serif;
+      --font-body: 'Noto Sans SC', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(250,250,247,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-mark svg { width: 20px; height: 20px; fill: white; }
+    .brand {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: 8px;
+      padding-left: 8px;
+      border-left: 1px solid var(--border);
+    }
+    .header-badge {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-light);
+      border: 1px solid var(--accent-mid);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .header-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+    .admin-btn {
+      padding: 6px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .admin-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+    .requirement-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .requirement-item {
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.2s;
+    }
+    .requirement-item:hover {
+      border-color: var(--accent-mid);
+      background: var(--accent-light);
+    }
+    .requirement-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .requirement-value {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.55;
+      word-break: break-word;
+      min-height: 20px;
+      outline: none;
+      border-radius: 6px;
+      padding: 2px 4px;
+      margin: -2px -4px;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+    .requirement-value[contenteditable="true"] {
+      cursor: text;
+    }
+    .requirement-value[contenteditable="true"]:hover {
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .requirement-value[contenteditable="true"]:focus {
+      background: #fff;
+      box-shadow: 0 0 0 2px var(--accent-mid);
+    }
+    .requirement-value.empty {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .requirement-item {
+      position: relative;
+    }
+    .requirement-ai-btn {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.15s, color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .requirement-item:hover .requirement-ai-btn {
+      opacity: 1;
+    }
+    .requirement-ai-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent-mid);
+      background: var(--accent-light);
+    }
+    .requirement-ai-btn.loading {
+      opacity: 1;
+      pointer-events: none;
+      color: var(--accent);
+    }
+    .requirement-ai-btn.loading::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid var(--accent);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .quick-action {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .quick-action:hover {
+      border-color: var(--accent-mid);
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .quick-action.loading {
+      pointer-events: none;
+      color: var(--text-muted);
+      border-color: var(--border);
+      background: var(--bg-soft);
+    }
+    .quick-action-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .title-ai-btn {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .title-ai-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+    .title-ai-btn.loading {
+      pointer-events: none;
+      color: var(--text-muted);
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .clarify-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--bg-soft);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: left;
+      width: 100%;
+    }
+    .clarify-option:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .clarify-option-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .clarify-option-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+    .clarify-option-text small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 11px;
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .clarify-warning {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+    .btn-subtext {
+      display: block;
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+
+    /* ── 菜单候选推荐区（拦截弹窗顶部） ──────────────── */
+    .menu-candidates {
+      background: linear-gradient(180deg, var(--accent-light) 0%, #fff 100%);
+      border: 1px solid var(--accent-mid);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      animation: fade-up 0.25s ease-out;
+    }
+    .menu-candidates-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .menu-candidates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .menu-candidate-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1.5px solid var(--accent-mid);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.18s;
+      font-family: inherit;
+      min-width: 0;
+    }
+    .menu-candidate-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(232,99,10,0.15);
+    }
+    .menu-candidate-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .menu-candidate-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .menu-candidate-tag {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .menu-candidate-tag.signature {
+      background: #FEF3C7;
+      color: #B45309;
+    }
+    .menu-candidate-tag.missing {
+      background: #FEE2E2;
+      color: #B91C1C;
+    }
+    .menu-candidate-tag.hot {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
+    .menu-candidate-tag.match {
+      background: #DBEAFE;
+      color: #1D4ED8;
+    }
+    .menu-candidates-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .menu-candidates-divider::before,
+    .menu-candidates-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Inline Menu Suggestions (below prompt input) ── */
+    .menu-suggest {
+      margin-top: 8px;
+      background: linear-gradient(135deg, var(--accent-light) 0%, #fff 100%);
+      border: 1px solid var(--accent-mid);
+      border-radius: 10px;
+      padding: 12px 14px;
+      animation: fade-up 0.2s ease-out;
+    }
+    .menu-suggest-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .menu-suggest-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .menu-suggest-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      background: #fff;
+      border: 1.5px solid var(--accent-mid);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .menu-suggest-item:hover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(232,99,10,0.12);
+    }
+    .menu-suggest-generic {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .menu-suggest-generic-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .menu-suggest-generic-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-secondary);
+    }
+
+    /* ── Main Layout ─────────────────────────────────── */
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Hero ────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fade-up 0.6s ease-out both;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Panel ───────────────────────────────────────── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 32px;
+      animation: fade-up 0.6s 0.1s ease-out both;
+    }
+    .panel-header {
+      padding: 20px 28px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-header-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .panel-body { padding: 20px 28px 28px; }
+
+    /* ── API Key ─────────────────────────────────────── */
+    .apikey-section {
+      margin-bottom: 24px;
+    }
+    .apikey-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .apikey-input-wrap {
+      position: relative;
+    }
+    .apikey-input-wrap input {
+      width: 100%;
+      padding: 12px 48px 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .apikey-input-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,99,10,0.1);
+    }
+    .apikey-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .apikey-toggle:hover { color: var(--text-secondary); }
+
+    /* ── Templates ───────────────────────────────────── */
+    .templates-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .templates-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .template-chip {
+      padding: 9px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--bg);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .template-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+    .template-chip.active {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+      font-weight: 600;
+      box-shadow: 0 2px 8px var(--accent-mid);
+    }
+    .template-chip.active:hover {
+      color: #fff;
+    }
+    .purpose-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: 6px;
+      padding: 3px 4px 3px 10px;
+      background: var(--accent-light);
+      border: 1px solid var(--accent-mid);
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .purpose-chip button {
+      width: 18px;
+      height: 18px;
+      border: none;
+      background: transparent;
+      color: var(--accent);
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.15s;
+    }
+    .purpose-chip button:hover {
+      background: var(--accent-mid);
+      color: #fff;
+    }
+
+    /* ── Prompt ──────────────────────────────────────── */
+    .prompt-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .prompt-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .prompt-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      background: var(--bg);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .prompt-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,99,10,0.1);
+    }
+    .prompt-textarea::placeholder { color: var(--text-muted); }
+
+    /* ── Options Row ─────────────────────────────────── */
+    /* ── Size Scene Card ───────────────────────────── */
+    .size-scene-wrap {
+      margin-top: 20px;
+    }
+    .size-scene-wrap > label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .size-scene-card {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      background: var(--bg);
+      transition: border-color 0.2s;
+    }
+    .size-scene-card.active {
+      border-color: var(--accent);
+      background: #FFF7ED;
+    }
+    .size-scene-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .size-scene-icon {
+      font-size: 22px;
+      flex-shrink: 0;
+      width: 36px;
+      text-align: center;
+    }
+    .size-scene-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .size-scene-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .size-scene-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .size-scene-badge {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      background: #FFF7ED;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 2px 8px;
+      display: none;
+    }
+    .size-scene-card.active .size-scene-badge {
+      display: block;
+    }
+    .size-advanced-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+    .size-advanced-toggle:hover { color: var(--accent); }
+    .size-advanced-toggle svg { transition: transform 0.2s; }
+    .size-advanced-toggle.open svg { transform: rotate(180deg); }
+    .size-advanced-panel {
+      margin-top: 6px;
+    }
+    .size-advanced-panel select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-secondary);
+      background: var(--bg);
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A8A29E' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 32px;
+    }
+
+    /* ── Style Preset Selector ─────────────────────── */
+    .style-preset-wrap {
+      margin-top: 20px;
+    }
+    .style-preset-wrap > label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .style-category-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1.5px solid var(--border);
+      margin-bottom: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .style-category-tabs::-webkit-scrollbar { display: none; }
+    .style-cat-tab {
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+      cursor: pointer;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1.5px;
+      transition: color 0.15s, border-color 0.15s;
+      font-family: var(--font-body);
+    }
+    .style-cat-tab:hover { color: var(--text-primary); }
+    .style-cat-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+      font-weight: 600;
+    }
+    .style-chips-panel {
+      display: none;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 2px 0;
+    }
+    .style-chips-panel.active { display: flex; }
+    .style-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      background: var(--bg);
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-body);
+      white-space: nowrap;
+    }
+    .style-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: #FFF7ED;
+    }
+    .style-chip.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+    .style-selected-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 6px 12px;
+      background: #FFF7ED;
+      border: 1px solid var(--accent-light);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--accent);
+    }
+    .style-selected-bar.show { display: flex; }
+    .style-selected-bar .clear-style {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0 2px;
+    }
+    .style-selected-bar .clear-style:hover { color: var(--accent); }
+
+    .options-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .option-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .option-group select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--text-primary);
+      background: var(--bg);
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A8A29E' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 32px;
+    }
+    .option-group select:focus { border-color: var(--accent); }
+
+    /* ── Generate Button ─────────────────────────────── */
+    .generate-wrap {
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-generate {
+      flex: 1;
+      padding: 15px 28px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-generate:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(232,99,10,0.3);
+    }
+    .btn-generate:active:not(:disabled) { transform: translateY(0); }
+    .btn-generate:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .btn-generate.loading .btn-text { display: none; }
+    .btn-generate .spinner {
+      display: none;
+      width: 20px; height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .btn-generate.loading .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-clear {
+      padding: 15px 20px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-clear:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+    /* ── Gallery ─────────────────────────────────────── */
+    .gallery-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      animation: fade-up 0.6s 0.2s ease-out both;
+    }
+    .gallery-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .gallery-count {
+      font-size: 13px;
+      color: var(--text-muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      animation: fade-up 0.6s 0.3s ease-out both;
+    }
+    .gallery-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--text-muted);
+      font-size: 15px;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .gallery-empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    /* ── Image Card ──────────────────────────────────── */
+    .image-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.2s, transform 0.2s;
+      animation: card-in 0.4s ease-out both;
+    }
+    .image-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-3px);
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .image-card .img-wrap {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+      aspect-ratio: 4/3;
+    }
+    .image-card .img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s;
+    }
+    .image-card:hover .img-wrap img { transform: scale(1.03); }
+    .img-loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--bg);
+    }
+    .img-loading .spinner-lg {
+      width: 32px; height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .img-loading span { font-size: 13px; color: var(--text-muted); }
+    .card-body { padding: 14px 16px; }
+    .card-prompt {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-size {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 8px;
+    }
+    .card-actions { display: flex; gap: 6px; }
+    .card-btn {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .card-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+    .card-btn.danger:hover { border-color: #DC2626; color: #DC2626; background: #FEF2F2; }
+
+    /* ── Toast ───────────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      background: var(--text-primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      animation: toast-in 0.3s ease-out, toast-out 0.3s 2.5s ease-in both;
+      white-space: nowrap;
+    }
+    .toast.error { background: #DC2626; }
+    .toast.success { background: #16A34A; }
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(12px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toast-out {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(-8px) scale(0.95); }
+    }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 640px) {
+      .main { padding: 24px 16px 60px; }
+      .panel-body { padding: 16px; }
+      .panel-header { padding: 16px 16px 0; }
+      .options-row { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .templates-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+      .header-badge { display: none; }
+      .generate-wrap { flex-direction: column; }
+      .btn-generate { width: 100%; }
+    }
+
+    /* ── Prompt Wrap & Optimize Button ──────────────── */
+    .prompt-wrap { position: relative; }
+    .btn-optimize {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: var(--text-muted);
+      line-height: 1;
+    }
+    .btn-optimize:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      transform: scale(1.08);
+    }
+    .btn-optimize:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-optimize.loading {
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* ── Optimize Modal ──────────────────────────────── */
+    .optimize-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      background: rgba(28,25,23,0.7);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(6px);
+    }
+    .optimize-modal.open { display: flex; }
+    .optimize-modal-inner {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 720px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px;
+      animation: lightbox-in 0.25s ease-out;
+    }
+    .optimize-modal-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .optimize-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 560px) {
+      .optimize-compare { grid-template-columns: 1fr; }
+    }
+    .compare-col {
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .compare-col.optimized {
+      border-color: var(--accent-mid);
+      background: var(--accent-light);
+    }
+    .compare-col-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .compare-col.optimized .compare-col-label { color: var(--accent); }
+    .compare-col-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .optimize-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .btn-apply {
+      padding: 11px 24px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-apply:hover { background: var(--accent-hover); }
+    .btn-cancel {
+      padding: 11px 20px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-cancel:hover { border-color: var(--text-muted); color: var(--text-primary); }
+
+    /* ── Scrollbar ───────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ── Lightbox ─────────────────────────────────────── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(28,25,23,0.88);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(8px);
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      object-fit: contain;
+      animation: lightbox-in 0.25s ease-out;
+    }
+    @keyframes lightbox-in {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      color: white;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .lightbox-close:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── Debug Drawer ─────────────────────────────────── */
+    .debug-fab {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      z-index: 10020;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 999px;
+      background: var(--text-primary);
+      color: white;
+      box-shadow: var(--shadow-lg);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .debug-fab:hover { background: #2C2725; }
+    .debug-drawer {
+      position: fixed;
+      right: 20px;
+      bottom: 76px;
+      z-index: 10019;
+      width: min(460px, calc(100vw - 32px));
+      max-height: min(72vh, 760px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: none;
+    }
+    .debug-drawer.open { display: block; }
+    .debug-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(250,250,247,0.95);
+    }
+    .debug-title {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .debug-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .debug-mini-btn {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .debug-mini-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+    }
+    .debug-body {
+      padding: 14px 16px 16px;
+      overflow: auto;
+      max-height: calc(min(72vh, 760px) - 58px);
+      background: linear-gradient(180deg, #FFF 0%, #FAFAF7 100%);
+    }
+    .debug-section {
+      margin-bottom: 16px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+    .debug-section:last-child { margin-bottom: 0; }
+    .debug-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .debug-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .debug-stat {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .debug-stat-key {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .debug-stat-value {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.5;
+      word-break: break-word;
+    }
+    .debug-code {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      max-height: 180px;
+      overflow: auto;
+    }
+    .debug-log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .debug-log-item {
+      border-left: 3px solid var(--border);
+      padding-left: 10px;
+    }
+    .debug-log-item.success { border-left-color: #16A34A; }
+    .debug-log-item.error { border-left-color: #DC2626; }
+    .debug-log-item.active { border-left-color: var(--accent); }
+    .debug-log-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+    .debug-log-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-primary);
+    }
+    .debug-log-content {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .debug-empty {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 22px 10px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+    }
+    @media (max-width: 640px) {
+      .debug-fab {
+        right: 16px;
+        bottom: 16px;
+      }
+      .debug-drawer {
+        right: 16px;
+        bottom: 68px;
+        width: calc(100vw - 32px);
+      }
+      .debug-meta { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+    </div>
+    <span class="brand">商家生图助手</span>
+    <span class="brand-sub">Powered by 智谱 AI</span>
+    <div class="header-badge">Wan 2.7 · 阿里百炼</div>
+    <button class="admin-btn" onclick="openAdminPanel()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      后台配置
+    </button>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>用自然语言，<em>生成</em>你的营销图</h1>
+    <p>输入图片描述，选择尺寸，即可生成高质量商品图、海报、菜单等营销素材</p>
+  </div>
+
+  <!-- Generator Panel -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-header-dot"></div>
+      <span class="panel-title">图片生成</span>
+    </div>
+    <div class="panel-body">
+
+      <!-- API Key -->
+      <div class="apikey-section">
+        <div class="apikey-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          API Key（阿里百炼 · Wan 2.7，储存在本地浏览器）
+        </div>
+        <div class="apikey-input-wrap">
+          <input type="password" id="apiKeyInput" placeholder="请粘贴你的阿里百炼 API Key（已内置默认 Key）" />
+          <button class="apikey-toggle" onclick="toggleKeyVisibility()" title="显示/隐藏">
+            <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Purpose (图片用途入口) -->
+      <div>
+        <div class="templates-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/></svg>
+          图片用途（先选用途，再输入商品/主题）
+        </div>
+        <div class="templates-grid" id="templateGrid"></div>
+      </div>
+
+      <!-- Prompt -->
+      <div>
+        <div class="prompt-label">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          商品/主题
+          <span class="purpose-chip" id="purposeChip" style="display: none;">
+            <span id="purposeChipLabel"></span>
+            <button type="button" onclick="clearPurpose()" title="清除已选用途">×</button>
+          </span>
+          <span class="prompt-count" id="promptCount">0 / 500</span>
+        </div>
+        <div class="prompt-wrap">
+          <textarea class="prompt-textarea" id="promptInput" placeholder="先在上方选择图片用途，然后输入你的商品/主题，例如：奶茶 / 招牌红烧肉 / 七夕巧克力蛋糕" maxlength="500"></textarea>
+        </div>
+        <div class="menu-suggest" id="menuSuggest" style="display:none;">
+          <div class="menu-suggest-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            根据你的菜单，猜你想生成
+          </div>
+          <div class="menu-suggest-items" id="menuSuggestItems"></div>
+          <div class="menu-suggest-generic" id="menuSuggestGeneric"></div>
+        </div>
+      </div>
+
+      <!-- 画面风格预设 -->
+      <div class="style-preset-wrap" id="stylePresetWrap">
+        <label>🎨 画面风格 <span style="font-weight:400;color:var(--text-muted);">（可选，不选则 AI 自动推荐）</span></label>
+        <div class="style-category-tabs" id="styleCatTabs"></div>
+        <div id="styleChipsPanels"></div>
+        <div class="style-selected-bar" id="styleSelectedBar">
+          <span>已选风格：</span>
+          <strong id="styleSelectedLabel"></strong>
+          <button class="clear-style" onclick="clearStylePreset()" title="清除风格选择">✕</button>
+        </div>
+      </div>
+
+      <!-- 使用位置（根据用途自动推荐尺寸） -->
+      <div class="size-scene-wrap" id="sizeSceneWrap">
+        <label>使用位置</label>
+        <div class="size-scene-card" id="sizeSceneCard">
+          <div class="size-scene-main" id="sizeSceneMain">
+            <span class="size-scene-icon" id="sizeSceneIcon">🛍️</span>
+            <div class="size-scene-info">
+              <div class="size-scene-title" id="sizeSceneTitle">请先选择图片用途</div>
+              <div class="size-scene-meta" id="sizeSceneMeta">选择用途后自动推荐最佳尺寸</div>
+            </div>
+            <div class="size-scene-badge" id="sizeSceneBadge"></div>
+          </div>
+        </div>
+        <div class="size-advanced-toggle" onclick="toggleAdvancedSize()">
+          <span id="advancedSizeLabel">自定义尺寸</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="advancedSizeArrow"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div class="size-advanced-panel" id="sizeAdvancedPanel" style="display:none;">
+          <select id="sizeSelect">
+            <option value="1024*1024">1:1 · 1024×1024</option>
+            <option value="1280*720">16:9 · 1280×720</option>
+            <option value="720*1280">9:16 · 720×1280</option>
+            <option value="1024*768">4:3 · 1024×768</option>
+            <option value="768*1024">3:4 · 768×1024</option>
+            <option value="1152*896">5:4 · 1152×896</option>
+            <option value="896*1152">4:5 · 896×1152</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="options-row" style="grid-template-columns: 1fr 1fr;">
+        <div class="option-group">
+          <label for="qualitySelect">图片质量</label>
+          <select id="qualitySelect">
+            <option value="standard">标准</option>
+            <option value="high">高清</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label for="countSelect">生成数量</label>
+          <select id="countSelect">
+            <option value="1">1 张</option>
+            <option value="2">2 张</option>
+            <option value="3">3 张</option>
+            <option value="4">4 张</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Generate Button -->
+      <div class="generate-wrap">
+        <button class="btn-generate" id="generateBtn" onclick="checkRequirements()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          <span>
+            <span class="btn-text">生成前检查</span>
+            <span class="btn-subtext">先 AI 理解需求，确认后再生成（不浪费额度）</span>
+          </span>
+          <div class="spinner"></div>
+        </button>
+        <button class="btn-clear" onclick="clearAll()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          清空
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery -->
+  <div class="gallery-section">
+    <div class="gallery-header">
+      <span class="gallery-title">生成记录</span>
+      <span class="gallery-count" id="galleryCount">0 张</span>
+    </div>
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="gallery-empty" id="galleryEmpty">
+        <div class="gallery-empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <p>还没有生成记录，试试上面的描述吧</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)">✕</button>
+  <img id="lightboxImg" src="" alt="预览" />
+</div>
+
+<!-- Clarify Modal (模糊输入拦截) -->
+<div class="optimize-modal" id="clarifyModal">
+  <div class="optimize-modal-inner" style="max-width: 560px;">
+    <div class="optimize-modal-title" id="clarifyTitle">⚠️ 输入需要确认</div>
+    <div id="clarifyMessage" style="font-size: 13px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 18px;"></div>
+    <div id="clarifyHint" style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px; font-weight: 600;"></div>
+    <div id="clarifyOptions" style="display: flex; flex-direction: column; gap: 8px;"></div>
+    <div class="optimize-actions" style="margin-top: 22px;">
+      <button class="btn-cancel" onclick="closeClarifyModal()">取消</button>
+      <button class="btn-apply" id="clarifyProceedBtn" style="display: none;" onclick="resolveClarify({ action: 'proceed' })">仍然按字面理解生成</button>
+    </div>
+  </div>
+</div>
+
+<!-- Requirement Confirmation Modal -->
+<div class="optimize-modal" id="requirementModal">
+  <div class="optimize-modal-inner" style="max-width: 820px;">
+    <div class="optimize-modal-title">
+      <span>🔍</span> AI 已理解你的需求
+      <button class="title-ai-btn" onclick="rewriteAllFields()" title="AI 整体重写">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        AI 整体重写
+      </button>
+    </div>
+    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6;">
+      请核对以下智能拆解结果。<b>点击字段可直接编辑</b>，字段右下角的 ✨ 按钮可单独让 AI 重新优化该字段。
+      如果理解有偏差，可以点"取消"修改输入，或继续点"确认生成"按当前理解继续。
+    </div>
+    <div class="requirement-grid" id="requirementGrid"></div>
+
+    <div style="margin-top: 18px; border-top: 1px solid var(--border); padding-top: 16px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        提示词预览（确认后将按图片类型重新编译）
+      </div>
+      <div class="prompt-wrap" style="background: var(--bg-soft); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 13px; line-height: 1.7; color: var(--text-primary); max-height: 160px; overflow: auto;" id="requirementPromptPreview"></div>
+    </div>
+
+    <div class="quick-actions">
+      <div class="quick-action" onclick="changeStyle()" id="quickStyleBtn" title="保留主体和用途，重新生成另一套风格与构图">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="13" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="10" cy="20" r="2.5"/></svg>
+        <span>换一套视觉方案</span>
+      </div>
+      <div class="quick-action" onclick="changeSize()" id="quickSizeBtn" title="在支持的尺寸中切换">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+        <span>换尺寸</span>
+        <span class="quick-action-meta" id="quickSizeMeta"></span>
+      </div>
+    </div>
+
+    <div class="optimize-actions" style="margin-top: 20px;">
+      <button class="btn-cancel" onclick="closeRequirementModal()">取消 / 修改输入</button>
+      <button class="btn-apply" id="requirementConfirmBtn" onclick="confirmRequirement()">确认生成</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Panel Modal -->
+<div class="optimize-modal" id="adminPanel">
+  <div class="optimize-modal-inner" style="max-width: 800px;">
+    <div class="optimize-modal-title">
+      <span>⚙️</span> 后台配置中心
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        需求解析系统提示词（生成前检查用）
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+        用于在"生成前检查"环节解析用户输入为智能拆解字段 + 优化后提示词。<b>必须保持严格 JSON 输出</b>，否则确认卡会解析失败。
+      </div>
+      <div class="prompt-wrap">
+        <textarea class="prompt-textarea" id="requirementPromptInput" style="min-height: 280px; padding-bottom: 48px; font-size: 13px; line-height: 1.8;" placeholder="在此输入需求解析系统提示词..."></textarea>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+        <span style="font-size: 12px; color: var(--text-muted);" id="requirementPromptLength">0 字符</span>
+        <button class="btn-cancel" onclick="resetRequirementPrompt()" style="margin-left: auto; padding: 6px 12px; font-size: 12px;">恢复默认</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 24px; border-top: 1px solid var(--border); padding-top: 20px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        提示词编译系统提示词（Layer 2：生图 Brief 编译）
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+        用户确认需求后，系统会用此提示词将拆解字段"编译"为最终生图提示词。<b>不同图片类型会生成结构完全不同的 brief</b>。
+      </div>
+      <div class="prompt-wrap">
+        <textarea class="prompt-textarea" id="compilePromptInput" style="min-height: 200px; padding-bottom: 48px; font-size: 13px; line-height: 1.8;" placeholder="在此输入提示词编译系统提示词..."></textarea>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+        <span style="font-size: 12px; color: var(--text-muted);" id="compilePromptLength">0 字符</span>
+        <button class="btn-cancel" onclick="resetCompilePrompt()" style="margin-left: auto; padding: 6px 12px; font-size: 12px;">恢复默认</button>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 8px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        本店菜单（用于商品联想推荐）
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+        商家输入"奶茶"等模糊描述时，会优先从本店菜单中按<b>招牌 &gt; 销量 &gt; 缺图 &gt; 名称匹配度</b>排序，推荐具体商品。最多展示 5 个候选。
+      </div>
+
+      <!-- 菜单编辑表单 -->
+      <div class="menu-edit-row" style="display: grid; grid-template-columns: 2fr 1fr 70px 70px 70px 36px; gap: 6px; margin-bottom: 8px; align-items: center;">
+        <input type="text" id="menuInputName" placeholder="商品名" style="padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;" />
+        <input type="text" id="menuInputCategory" placeholder="类目" style="padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;" />
+        <input type="number" id="menuInputPrice" placeholder="价格" min="0" step="0.5" style="padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;" />
+        <input type="number" id="menuInputSales" placeholder="月售" min="0" style="padding: 7px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px;" />
+        <label style="display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 11px; color: var(--text-secondary); cursor: pointer;">
+          <input type="checkbox" id="menuInputSignature" /> 招牌
+        </label>
+        <button type="button" onclick="addMenuItem()" title="新增" style="background: var(--accent); color: #fff; border: none; border-radius: 6px; height: 30px; cursor: pointer; font-size: 16px; line-height: 1;">+</button>
+      </div>
+
+      <!-- 菜单列表 -->
+      <div id="menuList" style="max-height: 280px; overflow: auto; border: 1px solid var(--border); border-radius: 8px;"></div>
+
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+        <span style="font-size: 12px; color: var(--text-muted);" id="menuCount">0 个 SKU</span>
+        <button class="btn-cancel" onclick="resetMenu()" style="margin-left: auto; padding: 6px 12px; font-size: 12px;">恢复示例菜单</button>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 8px;">
+      <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        提示词优化 API Key
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+        用于调用 GLM-4-Flash 模型进行需求解析和提示词优化（已内置默认Key）
+      </div>
+      <div class="apikey-input-wrap">
+        <input type="password" id="optimizeApiKeyInput" placeholder="可留空使用默认 Key" style="font-size: 13px;" />
+        <button class="apikey-toggle" onclick="toggleOptimizeKeyVisibility()" title="显示/隐藏">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="optimize-actions" style="margin-top: 24px;">
+      <button class="btn-cancel" onclick="closeAdminPanel()">取消</button>
+      <button class="btn-apply" onclick="saveAdminConfig()">保存配置</button>
+    </div>
+  </div>
+</div>
+
+<!-- Debug Drawer -->
+<button class="debug-fab" id="debugFab" onclick="toggleDebugDrawer()">
+  <span>调试浮窗</span>
+</button>
+
+<div class="debug-drawer" id="debugDrawer">
+  <div class="debug-header">
+    <div class="debug-title">
+      <span>流程调试</span>
+    </div>
+    <div class="debug-actions">
+      <button class="debug-mini-btn" onclick="clearDebugState()">清空</button>
+      <button class="debug-mini-btn" onclick="toggleDebugDrawer()">收起</button>
+    </div>
+  </div>
+  <div class="debug-body" id="debugBody">
+    <div class="debug-empty">点击“AI 优化提示词”后，这里会展示系统提示词读取、接口请求、响应结果和最终优化词。</div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  // ── Config ────────────────────────────────────────────
+  // 通过本地代理转发，绕过 CORS
+  const API_BASE = '/proxy/api/v1';
+  const DEFAULT_WAN_API_KEY = 'sk-f5e62c5dc5dc46af82a940ba7536d615';
+
+  // 图片用途入口（点选后只预设 imageType，不再填示例 prompt）
+  const PURPOSES = [
+    { key: 'product',   label: '商品图',       icon: '🛍️', imageType: '商品图',         hint: '奶茶 / 红烧肉 / 巧克力蛋糕',       size: '1024*1024', sizeNote: '商品详情、菜单列表、外卖入口' },
+    { key: 'promo',     label: '活动海报',     icon: '🎉', imageType: '促销海报',       hint: '满 30 减 5 / 双 11 大促 / 限时 5 折', size: '720*1280',  sizeNote: '店铺活动页、朋友圈海报' },
+    { key: 'storefront',label: '店铺头图',     icon: '🏪', imageType: '店铺头图',       hint: '我的奶茶店 / 街角咖啡馆',           size: '1280*720',  sizeNote: '美团店铺首页、饿了么门店头图' },
+    { key: 'combo',     label: '套餐图',       icon: '🍱', imageType: '套餐图',         hint: '双人下午茶 / 三人家庭套餐',         size: '1024*768',  sizeNote: '团购套餐展示、满减活动' },
+    { key: 'menu',      label: '菜单配图',     icon: '📋', imageType: '菜单配图',       hint: '招牌珍珠奶茶 / 川味口水鸡',         size: '1024*768',  sizeNote: '菜单列表配图、分类头图' },
+    { key: 'newitem',   label: '新品上架图',   icon: '🆕', imageType: '新品上架图',     hint: '杨枝甘露 / 脏脏拿铁 / 季节限定',   size: '1024*1024', sizeNote: '新品推荐位、上新公告' },
+    { key: 'festival',  label: '节日营销图',   icon: '🧧', imageType: '节日营销图',     hint: '中秋月饼 / 圣诞限定 / 春节礼盒',   size: '720*1280',  sizeNote: '节日活动页、朋友圈推广' },
+    { key: 'signature', label: '招牌菜推荐图', icon: '⭐', imageType: '招牌菜推荐图',   hint: '门店第 1 名 / 主厨推荐',             size: '1024*1024', sizeNote: '招牌推荐位、店铺精选' },
+  ];
+
+  // 当前选中的图片用途
+  let selectedPurpose = null;
+
+  // ── 本店菜单（美团场景核心数据） ──────────────────
+  // SKU 字段：id, name, category, price, isSignature, monthlySales, hasImage, lastUpdatedAt
+  const DEFAULT_MENU = [
+    { id: 's_001', name: '招牌珍珠奶茶', category: '奶茶', price: 12, isSignature: true,  monthlySales: 900, hasImage: true,  lastUpdatedAt: 1717123200 },
+    { id: 's_002', name: '杨枝甘露',     category: '甜品', price: 16, isSignature: true,  monthlySales: 800, hasImage: true,  lastUpdatedAt: 1717000000 },
+    { id: 's_003', name: '芋泥波波奶茶', category: '奶茶', price: 14, isSignature: false, monthlySales: 600, hasImage: false, lastUpdatedAt: 1715000000 },
+    { id: 's_004', name: '暴打柠檬茶',   category: '茶饮', price: 13, isSignature: false, monthlySales: 500, hasImage: false, lastUpdatedAt: 1714800000 },
+    { id: 's_005', name: '原味奶茶',     category: '奶茶', price: 10, isSignature: false, monthlySales: 120, hasImage: true,  lastUpdatedAt: 1714000000 },
+    { id: 's_006', name: '黑椒牛肉饭',   category: '牛肉饭', price: 28, isSignature: true,  monthlySales: 760, hasImage: false, lastUpdatedAt: 1717350000 },
+    { id: 's_007', name: '番茄牛腩面',   category: '牛肉面', price: 26, isSignature: false, monthlySales: 520, hasImage: false, lastUpdatedAt: 1717340000 },
+    { id: 's_008', name: '双人牛肉套餐', category: '套餐',   price: 68, isSignature: false, monthlySales: 430, hasImage: true,  lastUpdatedAt: 1717330000 },
+  ];
+
+  function getMenu() {
+    try {
+      const raw = localStorage.getItem('merchant_menu');
+      if (!raw) return [...DEFAULT_MENU];
+      const arr = JSON.parse(raw);
+      return Array.isArray(arr) && arr.length > 0 ? arr : [...DEFAULT_MENU];
+    } catch {
+      return [...DEFAULT_MENU];
+    }
+  }
+  function setMenu(arr) {
+    localStorage.setItem('merchant_menu', JSON.stringify(arr));
+  }
+  function genMenuId() {
+    return 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+  }
+
+  const MENU_SYNONYMS = {
+    '牛肉': ['牛腩', '肥牛', '牛排', '牛杂', '牛肉饭', '牛肉面'],
+    '奶茶': ['茶饮', '珍珠奶茶', '波波奶茶', '原味奶茶'],
+    '果茶': ['柠檬茶', '水果茶', '茶饮'],
+    '套餐': ['组合', '双人', '单人', '家庭', '团购', '套饭'],
+    '招牌': ['主打', '推荐', '人气', '热销'],
+    '甜品': ['蛋糕', '冰粉', '烧仙草', '杨枝甘露'],
+  };
+
+  function normalizeMenuText(text) {
+    return (text || '').trim().toLowerCase().replace(/\s+/g, '');
+  }
+
+  function getMenuQueryTokens(query) {
+    const q = normalizeMenuText(query);
+    if (!q) return [];
+    const tokens = new Set([q]);
+    Object.entries(MENU_SYNONYMS).forEach(([key, values]) => {
+      if (q.includes(key)) {
+        tokens.add(key);
+        values.forEach(v => tokens.add(normalizeMenuText(v)));
+      }
+      values.forEach(v => {
+        const nv = normalizeMenuText(v);
+        if (q.includes(nv)) {
+          tokens.add(key);
+          tokens.add(nv);
+        }
+      });
+    });
+    ['招牌', '套餐', '牛肉', '奶茶', '果茶', '甜品', '面', '饭'].forEach(t => {
+      if (q.includes(t)) tokens.add(t);
+    });
+    return [...tokens].filter(Boolean);
+  }
+
+  function isGenericMenuIntent(query) {
+    const q = normalizeMenuText(query);
+    return ['招牌', '套餐', '招牌套餐', '热销', '推荐', '缺图', '新品', '主打'].some(w => q.includes(w));
+  }
+
+  function buildMenuReasons(item, match) {
+    const reasons = [];
+    if (match.nameExact) reasons.push('名称完全匹配');
+    else if (match.nameMatch) reasons.push(`与你输入的"${match.query}"匹配`);
+    if (match.categoryMatch) reasons.push(`类目匹配"${item.category || ''}"`);
+    if (match.synonymMatch) reasons.push('同义词匹配');
+    if (item.isSignature) reasons.push('招牌菜');
+    if ((item.monthlySales || 0) >= 500) reasons.push(`月售${item.monthlySales}`);
+    else if ((item.monthlySales || 0) >= 300) reasons.push('月售高');
+    if (!item.hasImage) reasons.push('当前缺图');
+    return reasons.slice(0, 3);
+  }
+
+  // 排序算法：名称匹配 > 类目匹配 > 同义词匹配 > 招牌/销量/缺图加权
+  // 具体词不再用热销兜底，避免"牛肉"推荐无关奶茶；泛意图才允许商业信号补充推荐。
+  function rankMenuCandidates(menu, query) {
+    const q = normalizeMenuText(query);
+    if (!q || !Array.isArray(menu) || menu.length === 0) return [];
+
+    const tokens = getMenuQueryTokens(q);
+    const genericIntent = isGenericMenuIntent(q);
+
+    return menu.map(item => {
+      const name = normalizeMenuText(item.name);
+      const cat = normalizeMenuText(item.category);
+      let nameScore = 0;
+      let categoryScore = 0;
+      let synonymScore = 0;
+      const match = {
+        query: q,
+        nameExact: false,
+        nameMatch: false,
+        categoryMatch: false,
+        synonymMatch: false,
+      };
+
+      if (name === q) { nameScore = 120; match.nameExact = true; match.nameMatch = true; }
+      else if (name.startsWith(q)) { nameScore = 95; match.nameMatch = true; }
+      else if (name.includes(q)) { nameScore = 80; match.nameMatch = true; }
+
+      if (cat === q) { categoryScore = 70; match.categoryMatch = true; }
+      else if (cat.includes(q)) { categoryScore = 55; match.categoryMatch = true; }
+
+      tokens.forEach(token => {
+        if (token === q) return;
+        if (name.includes(token)) {
+          synonymScore = Math.max(synonymScore, 45);
+          match.synonymMatch = true;
+        }
+        if (cat.includes(token)) {
+          synonymScore = Math.max(synonymScore, 32);
+          match.synonymMatch = true;
+          match.categoryMatch = true;
+        }
+      });
+
+      if (q.includes('套餐') && (name.includes('套餐') || cat.includes('套餐') || name.includes('组合'))) {
+        categoryScore = Math.max(categoryScore, 65);
+        match.categoryMatch = true;
+      }
+      if (q.includes('招牌') && item.isSignature) {
+        synonymScore = Math.max(synonymScore, 38);
+        match.synonymMatch = true;
+      }
+
+      const matchScore = nameScore + categoryScore + synonymScore;
+      const businessScore =
+        (item.isSignature ? 14 : 0) +
+        Math.min(16, Math.floor((item.monthlySales || 0) / 80)) +
+        (!item.hasImage ? 10 : 0);
+      const shouldInclude = matchScore > 0 || (genericIntent && businessScore >= 14);
+      const score = matchScore * 10 + businessScore;
+      const reasons = buildMenuReasons(item, match);
+
+      return { item, score, matchScore, businessScore, reasons, shouldInclude };
+    })
+    .filter(c => c.shouldInclude)
+    .sort((a, b) => {
+      if (a.matchScore !== b.matchScore) return b.matchScore - a.matchScore;
+      if (a.score !== b.score) return b.score - a.score;
+      const ta = a.item.lastUpdatedAt || 0;
+      const tb = b.item.lastUpdatedAt || 0;
+      return tb - ta;
+    })
+    .map(c => ({ ...c.item, _matchScore: c.matchScore, _matchReasons: c.reasons }))
+    .slice(0, 5);
+  }
+
+  // ── State ─────────────────────────────────────────────
+  let images = [];
+
+  // ── Init ──────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    renderTemplates();
+    loadApiKey();
+    document.getElementById('promptInput').addEventListener('input', updateCharCount);
+    updateCharCount();
+    setupMenuSuggest();
+
+    // 手动选择尺寸时更新场景卡片
+    document.getElementById('sizeSelect').addEventListener('change', () => {
+      const val = document.getElementById('sizeSelect').value;
+      const card = document.getElementById('sizeSceneCard');
+      const title = document.getElementById('sizeSceneTitle');
+      const meta = document.getElementById('sizeSceneMeta');
+      const badge = document.getElementById('sizeSceneBadge');
+      const icon = document.getElementById('sizeSceneIcon');
+      const ratio = SIZE_RATIO_LABELS[val] || '';
+      const label = SIZE_LABELS[val] || val;
+      card.classList.add('active');
+      icon.textContent = '📐';
+      title.textContent = label;
+      meta.textContent = '已手动选择尺寸';
+      badge.textContent = ratio;
+    });
+  });
+
+  function renderTemplates() {
+    const grid = document.getElementById('templateGrid');
+    grid.innerHTML = PURPOSES.map((p, i) => `
+      <button type="button" class="template-chip" data-purpose="${p.key}" onclick="selectPurpose('${p.key}')" title="选择 ${p.imageType} 后，再输入你的商品/主题">${p.icon} ${p.label}</button>
+    `).join('');
+  }
+
+  const SIZE_RATIO_LABELS = {
+    '1024*1024': '1:1',
+    '1280*720': '16:9',
+    '720*1280': '9:16',
+    '1024*768': '4:3',
+    '768*1024': '3:4',
+    '1152*896': '5:4',
+    '896*1152': '4:5',
+  };
+
+  // 选中某个图片用途
+  function selectPurpose(key) {
+    const p = PURPOSES.find(x => x.key === key);
+    if (!p) return;
+    selectedPurpose = p;
+
+    // 选中态
+    document.querySelectorAll('.template-chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.purpose === key);
+    });
+
+    // chip 展示
+    const chip = document.getElementById('purposeChip');
+    document.getElementById('purposeChipLabel').textContent = `已选：${p.imageType}`;
+    chip.style.display = 'inline-flex';
+
+    // 提示 placeholder
+    const promptInput = document.getElementById('promptInput');
+    promptInput.placeholder = `已选「${p.imageType}」，请输入你的商品/主题，例如：${p.hint}`;
+    promptInput.focus();
+
+    // 自动设置推荐尺寸
+    if (p.size) {
+      document.getElementById('sizeSelect').value = p.size;
+    }
+    updateSizeScene();
+  }
+
+  // 清除已选用途
+  function clearPurpose() {
+    selectedPurpose = null;
+    document.querySelectorAll('.template-chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('purposeChip').style.display = 'none';
+    document.getElementById('promptInput').placeholder = '先在上方选择图片用途，然后输入你的商品/主题，例如：奶茶 / 招牌红烧肉 / 七夕巧克力蛋糕';
+    updateSizeScene();
+  }
+
+  function updateSizeScene() {
+    const card = document.getElementById('sizeSceneCard');
+    const icon = document.getElementById('sizeSceneIcon');
+    const title = document.getElementById('sizeSceneTitle');
+    const meta = document.getElementById('sizeSceneMeta');
+    const badge = document.getElementById('sizeSceneBadge');
+
+    if (selectedPurpose) {
+      const ratio = SIZE_RATIO_LABELS[selectedPurpose.size] || '';
+      card.classList.add('active');
+      icon.textContent = selectedPurpose.icon;
+      title.textContent = `${selectedPurpose.label} · 推荐 ${ratio}`;
+      meta.textContent = `适合：${selectedPurpose.sizeNote}`;
+      badge.textContent = ratio;
+    } else {
+      card.classList.remove('active');
+      icon.textContent = '📐';
+      title.textContent = '请先选择图片用途';
+      meta.textContent = '选择用途后自动推荐最佳尺寸';
+      badge.textContent = '';
+    }
+  }
+
+  function toggleAdvancedSize() {
+    const panel = document.getElementById('sizeAdvancedPanel');
+    const toggle = panel.previousElementSibling;
+    const open = panel.style.display !== 'none';
+    panel.style.display = open ? 'none' : 'block';
+    toggle.classList.toggle('open', !open);
+  }
+
+  function updateCharCount() {
+    const len = document.getElementById('promptInput').value.length;
+    document.getElementById('promptCount').textContent = `${len} / 500`;
+  }
+
+  // ── Inline Menu Suggestions (as user types) ────────
+  let _suggestTimer = null;
+  function setupMenuSuggest() {
+    const input = document.getElementById('promptInput');
+    input.addEventListener('input', () => {
+      clearTimeout(_suggestTimer);
+      _suggestTimer = setTimeout(() => showMenuSuggestions(input.value), 300);
+    });
+    input.addEventListener('blur', () => {
+      setTimeout(() => {
+        const panel = document.getElementById('menuSuggest');
+        if (panel) panel.style.display = 'none';
+      }, 200);
+    });
+    input.addEventListener('focus', () => {
+      const q = input.value.trim();
+      if (q.length >= 1) showMenuSuggestions(q);
+    });
+  }
+
+  function showMenuSuggestions(query) {
+    const panel = document.getElementById('menuSuggest');
+    const itemsEl = document.getElementById('menuSuggestItems');
+    const genericEl = document.getElementById('menuSuggestGeneric');
+    if (!panel || !itemsEl) return;
+
+    const q = (query || '').trim();
+    if (q.length < 1) {
+      panel.style.display = 'none';
+      return;
+    }
+
+    const candidates = rankMenuCandidates(getMenu(), q);
+    if (candidates.length === 0) {
+      panel.style.display = 'none';
+      return;
+    }
+
+    itemsEl.innerHTML = candidates.map(item => {
+      const tags = [];
+      const reasons = item._matchReasons || [];
+      reasons.forEach(reason => tags.push('<span class="menu-candidate-tag match">' + escapeHtml(reason) + '</span>'));
+      if (item.isSignature) tags.push('<span class="menu-candidate-tag signature">招牌</span>');
+      if (!item.hasImage) tags.push('<span class="menu-candidate-tag missing">缺图</span>');
+      if ((item.monthlySales || 0) >= 500) tags.push('<span class="menu-candidate-tag hot">月售 ' + item.monthlySales + '</span>');
+      return `<button type="button" class="menu-suggest-item" data-name="${escapeHtml(item.name)}">${escapeHtml(item.name)} ${tags.join('')}</button>`;
+    }).join('');
+
+    genericEl.innerHTML = `<button type="button" class="menu-suggest-generic-btn" onclick="dismissMenuSuggest()">跳过，生成一张「${escapeHtml(q)}」通用图</button>`;
+
+    itemsEl.querySelectorAll('.menu-suggest-item').forEach(btn => {
+      btn.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        document.getElementById('promptInput').value = btn.dataset.name;
+        updateCharCount();
+        if (!selectedPurpose) selectPurpose('product');
+        panel.style.display = 'none';
+        addDebugLog('菜单联想命中', `用户从内联建议选中：${btn.dataset.name}`, 'active');
+      });
+    });
+
+    panel.style.display = 'block';
+  }
+
+  function dismissMenuSuggest() {
+    const panel = document.getElementById('menuSuggest');
+    if (panel) panel.style.display = 'none';
+  }
+
+  // ── API Key ───────────────────────────────────────────
+  function loadApiKey() {
+    const saved = localStorage.getItem('wan_api_key') || localStorage.getItem('cogview_api_key');
+    document.getElementById('apiKeyInput').value = saved || DEFAULT_WAN_API_KEY;
+  }
+
+  function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (key && key !== DEFAULT_WAN_API_KEY) {
+      localStorage.setItem('wan_api_key', key);
+    }
+  }
+
+  function toggleKeyVisibility() {
+    const input = document.getElementById('apiKeyInput');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } catch (err) {
+      if (err.name === 'AbortError') {
+        throw new Error(`请求超时（${Math.round(timeoutMs / 1000)} 秒），请稍后重试`);
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // ── Generate ──────────────────────────────────────────
+
+  // ── 模糊输入拦截规则（按你给的 6 类） ──────────────
+  // 1. 泛品类词：本身是类目而非具体商品（去掉"招牌"这种短前缀词，避免误伤"招牌珍珠奶茶"）
+  const GENERIC_WORDS = [
+    '饮品', '套餐', '小吃', '招牌菜', '甜品', '面食', '主食', '正餐',
+    '早餐', '午餐', '晚餐', '宵夜', '夜宵', '菜馆', '餐馆', '饭店', '餐厅',
+    '小炒', '炒菜', '家常菜', '招牌推荐', '推荐菜', '热销', '主打',
+  ];
+  // 2. 用途不清关键词
+  const PURPOSE_UNCLEAR = [
+    '做一张图', '做张图', '做个图', '做一幅', '来一个', '来一张', '画一个',
+    '随便', '好看', '漂亮的', '好一点的', '高大上', '高级感', '上档次', '上点档次',
+  ];
+  // 3. 菜品视觉词典（覆盖歧义菜名 + 地方小吃 + 易错形态 + 高频品类）
+  const DISH_VISUAL_DICT = {
+    // ── 歧义菜名（ambiguous = true → 触发澄清弹窗） ──
+    '蚂蚁上树': {
+      ambiguous: true,
+      explanation: '川菜"蚂蚁上树"，肉末炒粉丝',
+      visualSubject: '炒粉丝、肉末、葱花、红油酱色',
+      container: '白瓷盘或浅盘',
+      composition: '45度俯拍、近景',
+      forbidden: '蚂蚁、昆虫、树木、树枝、植物',
+      recommendedPrompt: '一盘川味蚂蚁上树（肉末粉丝），粉丝油润半透明，表面散布肉末和翠绿葱花，微红油色泽',
+    },
+    '猫耳朵': {
+      ambiguous: true,
+      explanation: '山西/陕西面食"猫耳朵"，小巧贝壳形面片',
+      visualSubject: '小贝壳形面片、浇头（肉酱/番茄/蔬菜）',
+      container: '碗或盘',
+      composition: '45度俯拍',
+      forbidden: '猫、猫耳朵、动物、毛皮',
+      recommendedPrompt: '一碗猫耳朵面食，小巧贝壳形面片配肉酱浇头，面片光滑有嚼劲感',
+    },
+    '老婆饼': {
+      ambiguous: true,
+      explanation: '广式传统糕点，冬瓉馅酥皮饼',
+      visualSubject: '圆形酥皮饼、层层酥皮、金黄色',
+      container: '盘子或烘焙纸',
+      composition: '45度侧拍或平拍，可堆叠展示',
+      forbidden: '人物、女性形象、婆婆形象',
+      recommendedPrompt: '几块金黄酥脆的老婆饼，层层酥皮清晰可见，表面有芝麻点缀，一块掰开露出冬瓉馅',
+    },
+    '夫妻肺片': {
+      ambiguous: true,
+      explanation: '川菜凉拌菜，牛舌/牛心/牛肚等牛杂凉拌',
+      visualSubject: '切片牛杂凉拌、红油、花生碎、芹菜段、辣椒',
+      container: '白瓷盘或长盘',
+      composition: '45度俯拍或平拍',
+      forbidden: '人物、夫妻形象、肺部器官、内脏解剖图',
+      recommendedPrompt: '一盘夫妻肺片，红油浇淋的薄切牛杂片，撒花生碎和芹菜段，色泽红亮诱人',
+    },
+    '驴打滚': {
+      ambiguous: true,
+      explanation: '北京传统小吃，豆面糕/黄豆面卷糕',
+      visualSubject: '金黄豆面裹着的软糯糕卷、切段展示、红豆馅',
+      container: '盘子',
+      composition: '45度俯拍、近景',
+      forbidden: '驴、动物、打滚动作',
+      recommendedPrompt: '几块驴打滚（豆面糕），金黄豆面包裹着软糯糕体，切面露出红豆馅，摆放整齐',
+    },
+    '佛跳墙': {
+      ambiguous: true,
+      explanation: '福建名菜，多种高档食材炖汤',
+      visualSubject: '砂锅或坛子、鲍鱼、海参、花菇、瑶柱等食材、浓汤',
+      container: '紫砂坛或砂锅',
+      composition: '45度侧拍，略带蒸汽感',
+      forbidden: '佛像、宗教元素、人物跳跃、墙壁',
+      recommendedPrompt: '一坛佛跳墙，紫砂坛中鲍鱼、海参、花菇等高档食材清晰可见，浓汤金黄，热气氤氲',
+    },
+    '虎皮青椒': {
+      ambiguous: true,
+      explanation: '家常菜，青椒煎至表皮起皱如虎皮纹',
+      visualSubject: '煎制起皱纹的青椒、酱汁',
+      container: '盘子',
+      composition: '45度俯拍',
+      forbidden: '老虎、虎皮纹布料、动物皮毛',
+      recommendedPrompt: '一盘虎皮青椒，青椒表皮煎至起皱呈虎皮纹理，淋上酱汁，微焦香气感',
+    },
+    '毛血旺': {
+      ambiguous: true,
+      explanation: '重庆江湖菜，鸭血/毛肚/豆芽等煮在红油汤中',
+      visualSubject: '鸭血块、毛肚、豆芽、午餐肉、红油汤底',
+      container: '大碗或砂锅',
+      composition: '45度俯拍',
+      forbidden: '血腥场景、恐怖元素、生血',
+      recommendedPrompt: '一份毛血旺，红油汤底中有鸭血块、毛肚、黄豆芽等食材，麻辣鲜烫，红油翻滚',
+    },
+    '锅包肉': {
+      ambiguous: true,
+      explanation: '东北菜，裹面糊炸制后挂酸甜汁的猪里脊',
+      visualSubject: '金黄色炸制肉片、酸甜酱汁、胡萝卜丝、香菜',
+      container: '盘子',
+      composition: '45度俯拍',
+      forbidden: '锅、铁锅、包裹布料',
+      recommendedPrompt: '一盘锅包肉，金黄酥脆的炸肉片挂着酸甜酱汁，点缀胡萝卜丝和香菜，外酥里嫩感',
+    },
+    // ── 地方小吃（ambiguous → 形态易误解） ──
+    '冰粉': {
+      ambiguous: true,
+      explanation: '西南地区夏日甜品，透明果冻状配红糖水',
+      visualSubject: '透明/半透明果冻状冰粉、红糖水、花生碎、芝麻、水果丁',
+      container: '透明碗或塑料杯',
+      composition: '45度俯拍或正面拍',
+      forbidden: '冰块堆、粉末、冰沙形态、冰淇淋',
+      recommendedPrompt: '一碗冰粉甜品，晶莹透明的果冻状冰粉浇上红糖水，点缀花生碎、芝麻和水果丁，清凉夏日感',
+    },
+    '凉粉': {
+      ambiguous: true,
+      explanation: '豆类/薯类淀粉做成的凉拌食品',
+      visualSubject: '半透明淀粉块/条、辣椒油、蒜泥、醋汁',
+      container: '碗或盘',
+      composition: '45度俯拍',
+      forbidden: '凉掉的面粉、粉笔、白色粉末',
+      recommendedPrompt: '一碗凉粉，半透明的淀粉凉粉切成条状，浇上红辣椒油和蒜泥调料，爽滑诱人',
+    },
+    '烧仙草': {
+      ambiguous: true,
+      explanation: '闽台甜品，仙草冻配红豆、花生等配料',
+      visualSubject: '深色仙草冻、红豆、花生、椰果、芋圆、奶盖',
+      container: '透明杯或碗',
+      composition: '45度侧拍或正面拍',
+      forbidden: '烧焦的草、火焰、燃烧场景',
+      recommendedPrompt: '一杯烧仙草甜品，深色仙草冻上层铺红豆、花生碎、芋圆和椰果，顶部浇奶盖',
+    },
+    '钵钵鸡': {
+      ambiguous: true,
+      explanation: '四川小吃，冷串串泡在红油/藤椒汤中',
+      visualSubject: '竹签串着的各类食材（鸡肉、藕片、土豆等）、红油汤底',
+      container: '陶钵或搪瓷盆',
+      composition: '45度侧拍，签子竖立',
+      forbidden: '活鸡、完整的鸡、钵中养鸡',
+      recommendedPrompt: '一钵钵钵鸡，陶钵中红油汤底里插满竹签串，串上鸡肉、藕片、土豆等食材，红油鲜亮',
+    },
+    '肠粉': {
+      ambiguous: true,
+      explanation: '广东早茶/早餐，米浆蒸制的薄皮卷',
+      visualSubject: '白色半透明米皮卷、虾仁/牛肉/叉烧馅、酱油汁',
+      container: '白瓷长盘',
+      composition: '45度俯拍，切段展示',
+      forbidden: '香肠、肠子、肠道、内脏',
+      recommendedPrompt: '一盘广式肠粉，白色半透明的米皮卷切段摆盘，淋上酱油汁，可见内部虾仁馅料',
+    },
+    '肉夹馍': {
+      ambiguous: false,
+      explanation: '陕西小吃，白吉馍夹腊汁肉',
+      visualSubject: '圆形白吉馍、夹着的卤肉碎、汤汁浸润',
+      container: '手持或纸袋/盘子',
+      composition: '正面平拍或45度侧拍，露出夹馅',
+      forbidden: '汉堡、面包、西式三明治',
+      recommendedPrompt: '一个陕西肉夹馍，酥脆的白吉馍从中掰开，夹着满满的卤肉碎，汤汁浸润面饼',
+    },
+    '螺蛳粉': {
+      ambiguous: false,
+      explanation: '广西柳州特色米粉，酸辣鲜',
+      visualSubject: '米粉、酸笋、腐竹、花生、木耳、酸豆角、红油汤',
+      container: '大碗',
+      composition: '45度俯拍或侧拍',
+      forbidden: '螺蛳壳堆积、蜗牛、活体螺蛳',
+      recommendedPrompt: '一碗螺蛳粉，圆米粉浸在红油汤底中，配腐竹、酸笋、花生、木耳等配料，热气腾腾',
+    },
+    // ── 容易生成错形态的品类 ──
+    '奶茶': {
+      ambiguous: false,
+      explanation: '现制茶饮，通常为塑料杯装',
+      visualSubject: '透明塑料杯、茶色饮品、珍珠/椰果等配料、吸管',
+      container: '透明塑料杯、封口膜或杯盖',
+      composition: '正面拍或略侧拍，主体居中',
+      forbidden: '牛奶瓶、茶壶泡茶、热饮马克杯',
+      recommendedPrompt: '一杯现制奶茶，透明塑料杯装，浅棕色奶茶中可见珍珠配料，杯壁有冷饮水珠，插吸管',
+    },
+    '果茶': {
+      ambiguous: false,
+      explanation: '现制水果茶饮，有鲜切水果',
+      visualSubject: '透明杯中茶汤、鲜切水果片（柠檬、百香果、橙子等）',
+      container: '透明塑料杯或玻璃杯',
+      composition: '正面拍或略侧拍',
+      forbidden: '果汁盒、纯果汁无茶、罐装饮料',
+      recommendedPrompt: '一杯鲜果茶，透明杯中可见鲜切水果片和茶汤，色彩鲜艳清爽，杯壁有水珠',
+    },
+    '烧烤': {
+      ambiguous: false,
+      explanation: '碳烤/炭烤各类肉串蔬菜串',
+      visualSubject: '金属或竹签串着的烤肉/烤蔬菜、炭火烤痕、撒料',
+      container: '长条烤盘或铁板',
+      composition: '45度俯拍或侧拍，多串排列',
+      forbidden: '篝火、野外荒地、烧毁物品、火灾',
+      recommendedPrompt: '一组烧烤串，竹签串着的烤羊肉串和烤鸡翅，表面金黄有炭烤痕迹，撒孜然和辣椒面',
+    },
+    '炸串': {
+      ambiguous: false,
+      explanation: '油炸的各类串串小吃',
+      visualSubject: '竹签串着的油炸食材（年糕、豆腐、鸡柳等）、金黄色',
+      container: '纸袋或纸盒',
+      composition: '45度侧拍或正面拍',
+      forbidden: '炸弹、爆炸场景、军事元素',
+      recommendedPrompt: '一组炸串小吃，竹签串着的油炸年糕、鸡柳、豆腐等，金黄酥脆，刷有酱料',
+    },
+    '冒菜': {
+      ambiguous: false,
+      explanation: '四川小吃，类似一人份火锅煮菜',
+      visualSubject: '碗中红油汤底、各类煮熟蔬菜和肉类、粉条',
+      container: '大碗',
+      composition: '45度俯拍',
+      forbidden: '冒烟的菜地、生菜冒芽',
+      recommendedPrompt: '一碗冒菜，红油汤底中满满的各类蔬菜、肉片和粉条，香辣浓郁，热气腾腾',
+    },
+    '麻辣烫': {
+      ambiguous: false,
+      explanation: '街头小吃，各种食材涮煮在麻辣汤中',
+      visualSubject: '碗中红油麻辣汤、各类丸子/蔬菜/豆制品/肉类',
+      container: '大碗或不锈钢盆',
+      composition: '45度俯拍',
+      forbidden: '烫伤场景、温度计',
+      recommendedPrompt: '一碗麻辣烫，红亮麻辣汤底中有丸子、藕片、豆皮、蔬菜等丰富食材，麻辣鲜香',
+    },
+  };
+
+  // 从视觉词典中查找匹配项
+  function lookupVisualDict(text) {
+    const t = (text || '').trim();
+    if (!t) return null;
+    for (const [name, entry] of Object.entries(DISH_VISUAL_DICT)) {
+      if (t === name || t.startsWith(name) || t.endsWith(name)) {
+        return { name, ...entry };
+      }
+    }
+    return null;
+  }
+  // 4. 高风险文字（合规提醒）
+  const RISKY_WORDS = [
+    '第一', '最', '最好', '最佳', '最棒', '最受欢迎', '最好吃', '最强', '最大',
+    '首家', '独创', '独家', '官方', '正品', '国家级', '世界级', '顶级',
+    '最低', '最便宜', '限时特价', '限时秒杀', '跳楼价', '亏本', '清仓',
+  ];
+  // 5. 短词：1-2 字且没有 purpose 时直接拦截
+  const SHORT_OVERRIDE = 2; // <=2 字
+
+  // 入口：判断输入模糊度
+  function checkInputClarity(input, purpose) {
+    const text = (input || '').trim();
+    if (!text) return { level: 'error', type: 'empty' };
+
+    // 1. 用途不清（最高优先级）
+    for (const kw of PURPOSE_UNCLEAR) {
+      if (text.includes(kw)) {
+        return {
+          level: 'high', type: 'purpose_unclear',
+          message: `「${text}」没有说明商品或图片用途，直接生成可能与预期不一致。`,
+          hint: '请选择这张图的用途：',
+        };
+      }
+    }
+
+    // 2. 菜品视觉词典命中（ambiguous 的弹澄清窗）
+    const dictHit = lookupVisualDict(text);
+    if (dictHit && dictHit.ambiguous) {
+      return {
+        level: 'medium', type: 'disambiguation',
+        word: dictHit.name,
+        info: dictHit,
+        message: `「${text}」${dictHit.explanation}`,
+        hint: '请确认是否按以下含义生成：',
+      };
+    }
+
+    // 3. 高风险文字（合规提醒，提到泛品类之前：合规问题永远优先于推荐）
+    for (const w of RISKY_WORDS) {
+      if (text.includes(w)) {
+        return {
+          level: 'medium', type: 'risky',
+          word: w,
+          message: `「${text}」包含合规高风险词"${w}"，可能影响生图审核。`,
+          hint: '建议：',
+        };
+      }
+    }
+
+    // 4. 泛品类词
+    for (const kw of GENERIC_WORDS) {
+      if (text === kw || (text.length === kw.length + 1 && (text.endsWith(kw) || text.startsWith(kw)))) {
+        return {
+          level: 'medium', type: 'generic',
+          message: `「${text}」是一个类目，不是一个具体商品。直接生成容易跑偏。`,
+          hint: '请补充具体商品，或选择一张图来具体说说：',
+        };
+      }
+    }
+
+    // 5. 过短输入（没选用途时）
+    if (text.length <= SHORT_OVERRIDE && !purpose) {
+      return {
+        level: 'medium', type: 'short',
+        message: `「${text}」描述较宽泛，直接生成可能与预期不一致。`,
+        hint: '请先选择这张图的用途：',
+      };
+    }
+
+    return { level: 'ok' };
+  }
+
+  const SUBJECT_EXPANSIONS = {
+    '牛肉': [
+      { subject: '牛肉饭', purposeKey: 'product', reason: '适合商品列表图，主体明确' },
+      { subject: '牛肉面', purposeKey: 'menu', reason: '适合菜单配图，菜品形态明确' },
+      { subject: '牛肉套餐', purposeKey: 'combo', reason: '适合套餐/团购展示，份量感更强' },
+      { subject: '招牌牛肉菜', purposeKey: 'signature', reason: '适合招牌推荐位' },
+    ],
+    '套餐': [
+      { subject: '招牌双人套餐', purposeKey: 'combo', reason: '适合团购套餐展示' },
+      { subject: '热销单人套餐', purposeKey: 'combo', reason: '适合外卖入口转化' },
+      { subject: '家庭分享套餐', purposeKey: 'combo', reason: '适合多人用餐场景' },
+    ],
+    '招牌套餐': [
+      { subject: '招牌双人套餐', purposeKey: 'combo', reason: '突出招牌和组合感' },
+      { subject: '招牌家庭套餐', purposeKey: 'combo', reason: '突出份量和聚餐场景' },
+      { subject: '招牌菜组合套餐', purposeKey: 'signature', reason: '突出门店主打商品' },
+    ],
+  };
+
+  function detectPurposeFromText(text, purpose) {
+    const t = text || '';
+    if (purpose) return purpose;
+    const rules = [
+      { key: 'promo', words: ['海报', '活动', '促销', '满减', '优惠', '折扣', '打折', '限时', '秒杀'] },
+      { key: 'storefront', words: ['头图', '门头', '店铺首页', '店招', '横幅', 'banner'] },
+      { key: 'combo', words: ['套餐', '双人', '单人', '家庭餐', '组合'] },
+      { key: 'menu', words: ['菜单', '菜品图', '配图'] },
+      { key: 'newitem', words: ['新品', '上新', '新上架', '季节限定'] },
+      { key: 'festival', words: ['春节', '中秋', '端午', '圣诞', '七夕', '节日'] },
+      { key: 'signature', words: ['招牌', '主打', '推荐菜', '人气'] },
+    ];
+    const hit = rules.find(rule => rule.words.some(w => t.includes(w)));
+    return PURPOSES.find(p => p.key === (hit?.key || 'product'));
+  }
+
+  function detectMarketingGoal(text, purposeMeta) {
+    const t = text || '';
+    const discount = t.match(/满\s*\d+\s*减\s*\d+/);
+    if (discount) return discount[0].replace(/\s+/g, '') + '活动转化';
+    if (/周末|双休/.test(t) && /满减|优惠|促销/.test(t)) return '周末满减活动转化';
+    if (/满减/.test(t)) return '满减活动转化';
+    const percent = t.match(/\d+(\.\d+)?\s*折/);
+    if (percent) return percent[0].replace(/\s+/g, '') + '优惠促销';
+    if (/周末|双休/.test(t)) return '周末到店/外卖促销';
+    if (/新品|上新/.test(t)) return '新品曝光和点击转化';
+    if (/招牌|主打|推荐/.test(t)) return '突出门店招牌，提升点单转化';
+    if (/活动|优惠|促销|限时/.test(t)) return '活动促销转化';
+    if (purposeMeta?.key === 'promo') return '活动促销转化';
+    if (purposeMeta?.key === 'combo') return '突出套餐份量和性价比';
+    if (purposeMeta?.key === 'signature') return '突出招牌菜品质感';
+    return '提升商品点击和下单转化';
+  }
+
+  function detectStyleIntent(text, subject, purposeMeta) {
+    const t = text || '';
+    if (/高级|高端|质感|上档次/.test(t)) return '高级质感商业摄影';
+    if (/清新|干净|简约|夏天/.test(t)) return '清新明亮商业摄影';
+    if (/烟火气|热闹|家常/.test(t)) return '暖调烟火气美食摄影';
+    if (/国潮|喜庆|春节|中秋|节日/.test(t)) return '国潮喜庆营销视觉';
+    if (/明亮|促销感|活动感/.test(t)) return '明亮促销海报风';
+    return '';
+  }
+
+  function detectPlacement(purposeMeta) {
+    if (!purposeMeta) return '美团商品列表图 / 店铺入口图';
+    const map = {
+      product: '美团商品列表图 / 外卖入口',
+      promo: '美团店铺活动入口 / 朋友圈海报',
+      storefront: '美团店铺首页头图',
+      combo: '团购套餐展示 / 满减活动入口',
+      menu: '美团菜单列表 / 菜单分类配图',
+      newitem: '新品推荐位 / 上新公告',
+      festival: '节日活动页 / 朋友圈推广',
+      signature: '招牌推荐位 / 店铺精选',
+    };
+    return map[purposeMeta.key] || purposeMeta.sizeNote || '美团经营场景';
+  }
+
+  function cleanSubjectFromSentence(text) {
+    let s = (text || '').trim();
+    s = s.replace(/帮我|请|想要|需要|生成|做一张|做张|做个|来一张|来一个|图片|图|海报|主推|突出|看起来|高级一点|高级|好看|漂亮/g, '');
+    s = s.replace(/满\s*\d+\s*减\s*\d+/g, '');
+    s = s.replace(/周末|活动|促销|优惠|限时|店铺|美团|外卖|菜单|配图/g, '');
+    s = s.replace(/[，。,.、]/g, ' ').trim();
+    return s.split(/\s+/).filter(Boolean)[0] || text.trim();
+  }
+
+  function buildIntentSuggestions(input, purpose, menuCandidates = []) {
+    const text = (input || '').trim();
+    const suggestions = [];
+    menuCandidates.slice(0, 3).forEach(item => {
+      suggestions.push({
+        subject: item.name,
+        purposeKey: purpose?.key || (item.name.includes('套餐') ? 'combo' : 'product'),
+        reason: (item._matchReasons || ['本店菜单匹配']).join(' / '),
+      });
+    });
+    const q = normalizeMenuText(text);
+    const preset = SUBJECT_EXPANSIONS[q] || Object.entries(SUBJECT_EXPANSIONS).find(([key]) => q.includes(key))?.[1] || [];
+    preset.forEach(s => {
+      if (!suggestions.some(x => x.subject === s.subject)) suggestions.push(s);
+    });
+    return suggestions.slice(0, 5);
+  }
+
+  function inferMerchantIntent(input, purpose, menuCandidates = []) {
+    const purposeMeta = detectPurposeFromText(input, purpose);
+    const suggestions = buildIntentSuggestions(input, purposeMeta, menuCandidates);
+    const dictHit = lookupVisualDict(input);
+    const topMenu = menuCandidates.find(item => (item._matchScore || 0) > 0);
+    const subject = dictHit
+      ? ((input || '').includes('招牌') ? `招牌${dictHit.name}` : dictHit.name)
+      : (topMenu?.name || suggestions[0]?.subject || cleanSubjectFromSentence(input));
+    const marketingGoal = detectMarketingGoal(input, purposeMeta);
+    const placement = detectPlacement(purposeMeta);
+    const style = detectStyleIntent(input, subject, purposeMeta);
+    const background = purposeMeta?.key === 'promo'
+      ? '主体居中突出，预留活动标题和价格优惠信息区域'
+      : purposeMeta?.key === 'combo'
+        ? '套餐组合整齐摆放，俯拍或45度角，突出份量感'
+        : style.includes('高级')
+          ? '深色餐桌背景，暖光侧打，主体清晰，画面留白'
+          : '';
+    const avoid = '错误文字、非本店 logo、人物遮挡、主体不清晰、低分辨率';
+    const draft = {
+      imageType: purposeMeta?.imageType || '商品图',
+      mainSubject: subject,
+      marketingGoal,
+      placement,
+      scene: placement,
+      avoid,
+      suggestions,
+    };
+    if (style) draft.style = style;
+    if (background) draft.background = background;
+    return draft;
+  }
+
+  // 澄清弹窗（用 Promise 阻塞主流程）
+  let _clarifyResolver = null;
+  let _pendingVisualDict = null;
+  function showClarifyModal(clarity, prompt, menuCandidates = [], intentSuggestions = []) {
+    return new Promise((resolve) => {
+      _clarifyResolver = resolve;
+
+      const titleEl = document.getElementById('clarifyTitle');
+      const msgEl = document.getElementById('clarifyMessage');
+      const hintEl = document.getElementById('clarifyHint');
+      const optEl = document.getElementById('clarifyOptions');
+      const proceedBtn = document.getElementById('clarifyProceedBtn');
+
+      // ── 顶部：菜单候选推荐（只有 short / generic / purpose_unclear 且有候选时展示） ──
+      const showMenuSection = (
+        (clarity.type === 'short' || clarity.type === 'generic' || clarity.type === 'purpose_unclear')
+        && Array.isArray(menuCandidates) && menuCandidates.length > 0
+      );
+
+      titleEl.textContent = (clarity.type === 'purpose_unclear' || clarity.type === 'short')
+        ? '⚠️ 输入需要确认'
+        : (clarity.type === 'risky' ? '⚠️ 合规提醒' : '🔎 已识别为');
+
+      msgEl.textContent = clarity.message || '';
+      msgEl.innerHTML += (clarity.type === 'risky'
+        ? '<div class="clarify-warning">涉及"最 / 第一 / 顶级"等极限词时，平台审核可能不通过，建议改用更柔和的描述。</div>'
+        : '');
+
+      hintEl.textContent = clarity.hint || '';
+      optEl.innerHTML = '';
+
+      const addOpt = (icon, label, sub, onClick) => {
+        const btn = document.createElement('button');
+        btn.className = 'clarify-option';
+        btn.innerHTML = `<span class="clarify-option-icon">${icon}</span><span class="clarify-option-text">${escapeHtml(label)}${sub ? `<small>${escapeHtml(sub)}</small>` : ''}</span>`;
+        btn.onclick = onClick;
+        optEl.appendChild(btn);
+      };
+
+      if (showMenuSection) {
+        // 插入菜单候选 DOM 到消息区下方
+        const menuSection = document.createElement('div');
+        menuSection.className = 'menu-candidates';
+        const chips = menuCandidates.slice(0, 5).map(item => {
+          const tags = [];
+          const reasons = item._matchReasons || [];
+          reasons.forEach(reason => tags.push('<span class="menu-candidate-tag match">' + escapeHtml(reason) + '</span>'));
+          if (item.isSignature) tags.push('<span class="menu-candidate-tag signature">招牌</span>');
+          if (!item.hasImage) tags.push('<span class="menu-candidate-tag missing">缺图</span>');
+          if ((item.monthlySales || 0) >= 500) tags.push('<span class="menu-candidate-tag hot">月售 ' + item.monthlySales + '</span>');
+          const subline = tags.length
+            ? `<div class="menu-candidate-meta">${tags.join('')}</div>`
+            : `<div class="menu-candidate-meta">${escapeHtml(item.category || '未分类')}${item.price ? ' · ¥' + item.price : ''}</div>`;
+          return `
+            <button type="button" class="menu-candidate-btn" data-menu-id="${escapeHtml(item.id)}">
+              <div class="menu-candidate-name">${escapeHtml(item.name)}</div>
+              ${subline}
+            </button>
+          `;
+        }).join('');
+
+        menuSection.innerHTML = `
+          <div class="menu-candidates-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            根据你的菜单，猜你想生成
+          </div>
+          <div class="menu-candidates-grid">${chips}</div>
+          <div class="menu-candidates-divider" style="margin-top:12px;">还是没找到？</div>
+        `;
+        // 插入到 hint 之前（实际就是 append 到 optEl 父容器前面，简化：直接 prepend 到 msgEl 后）
+        msgEl.parentNode.insertBefore(menuSection, msgEl.nextSibling);
+
+        // 绑定候选点击
+        menuSection.querySelectorAll('.menu-candidate-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.menuId;
+            const item = menuCandidates.find(x => x.id === id);
+            if (item) resolve({ action: 'useMenuItem', item });
+          });
+        });
+      }
+
+      if (clarity.type === 'disambiguation') {
+        const word = clarity.word;
+        const info = clarity.info;
+        // 展示视觉词典详情
+        const detailHtml = document.createElement('div');
+        detailHtml.style.cssText = 'background:#f9fafb;border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;line-height:1.8;color:var(--text-secondary);';
+        detailHtml.innerHTML = `
+          <div><b>视觉主体：</b>${escapeHtml(info.visualSubject || '')}</div>
+          <div><b>常见容器：</b>${escapeHtml(info.container || '')}</div>
+          <div style="color:#B91C1C;"><b>禁止出现：</b>${escapeHtml(info.forbidden || '')}</div>
+        `;
+        optEl.parentNode.insertBefore(detailHtml, optEl);
+
+        // 1) 确认按识别后生成
+        const subject = info.recommendedPrompt ? word : word;
+        addOpt('✅', `确认，按「${word}」生成`, `系统将按正确含义生成，不会出现${(info.forbidden || '').split('、').slice(0, 2).join('、')}`, () => {
+          resolve({ action: 'useDisambiguated', mainSubject: word, visualDict: info });
+        });
+        // 2) 仍按字面理解生成
+        addOpt('✏️', '仍按字面理解生成', '忽略词典，按原文发给生图模型', () => {
+          resolve({ action: 'proceed' });
+        });
+        proceedBtn.style.display = 'none';
+      } else if (clarity.type === 'risky') {
+        addOpt('✏️', '我修改一下措辞', '取消后回输入框修改', () => {
+          resolve({ action: 'cancel' });
+        });
+        addOpt('➡️', '知道风险，继续生成', '仍然按你的原文生成', () => {
+          resolve({ action: 'proceed' });
+        });
+        proceedBtn.style.display = 'none';
+      } else {
+        if (intentSuggestions.length > 0) {
+          intentSuggestions.forEach(s => {
+            const p = PURPOSES.find(x => x.key === s.purposeKey) || PURPOSES.find(x => x.key === 'product');
+            addOpt(p.icon, `生成「${s.subject}」`, `${p.imageType} · ${s.reason}`, () => {
+              resolve({ action: 'useIntentSuggestion', suggestion: s });
+            });
+          });
+        }
+        // purpose_unclear / generic / short：推荐 4 个用途
+        const recs = [
+          { key: 'product',    label: '这是商品图',     sub: '主体是某个具体商品，例如招牌珍珠奶茶' },
+          { key: 'promo',      label: '这是活动海报',   sub: '主体是活动主题、文案、促销信息' },
+          { key: 'storefront', label: '这是店铺头图',   sub: '主体是店铺外观或门头招牌' },
+          { key: 'menu',       label: '这是菜单配图',   sub: '主体是菜单里的一道菜' },
+        ];
+        recs.forEach(r => {
+          addOpt(PURPOSES.find(p => p.key === r.key).icon, r.label, r.sub, () => {
+            resolve({ action: 'selectPurpose', key: r.key });
+          });
+        });
+        // 继续按字面意思
+        addOpt('➡️', '仍然按字面理解生成', '不指定用途，让 AI 自己推断', () => {
+          resolve({ action: 'proceed' });
+        });
+        proceedBtn.style.display = 'none';
+      }
+
+      document.getElementById('clarifyModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  function resolveClarify(result) {
+    if (_clarifyResolver) {
+      _clarifyResolver(result);
+      _clarifyResolver = null;
+    }
+    closeClarifyModal();
+  }
+  function closeClarifyModal() {
+    document.getElementById('clarifyModal').classList.remove('open');
+    document.body.style.overflow = '';
+    // 清理动态插入的菜单候选区块（避免下次打开残留）
+    document.querySelectorAll('#clarifyModal .menu-candidates').forEach(el => el.remove());
+    if (_clarifyResolver) {
+      _clarifyResolver({ action: 'cancel' });
+      _clarifyResolver = null;
+    }
+  }
+
+  // 第一步：生成前检查 —— 调 GLM-4-Flash 解析需求，弹出确认卡
+  async function checkRequirements() {
+    const prompt = document.getElementById('promptInput').value.trim();
+    if (!prompt) {
+      showToast(selectedPurpose ? `已选「${selectedPurpose.imageType}」，请输入商品/主题` : '请填写商品或主题', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    try {
+      let menuCandidatesForIntent = rankMenuCandidates(getMenu(), prompt);
+      // 【新增】模糊度拦截
+      const clarity = checkInputClarity(prompt, selectedPurpose);
+      if (clarity.level === 'high' || clarity.level === 'medium') {
+        // 只在 short / generic / purpose_unclear 时查菜单候选（disambiguation / risky 场景不太适合）
+        const needsMenuCandidates = (
+          clarity.type === 'short' || clarity.type === 'generic' || clarity.type === 'purpose_unclear'
+        );
+        const menuCandidates = needsMenuCandidates ? menuCandidatesForIntent : [];
+        const intentSuggestions = buildIntentSuggestions(prompt, selectedPurpose, menuCandidates);
+
+        const choice = await showClarifyModal(clarity, prompt, menuCandidates, intentSuggestions);
+        if (!choice || choice.action === 'cancel') {
+          showToast('已取消，请修改输入', 'info');
+          return;
+        }
+        if (choice.action === 'useMenuItem') {
+          // 选中某个菜单商品 → 替换输入并自动选"商品图"用途（如尚未选）
+          const item = choice.item;
+          if (!selectedPurpose) selectPurpose('product');
+          document.getElementById('promptInput').value = item.name;
+          updateCharCount();
+          addDebugLog('菜单联想命中', `从菜单中选中：${item.name}（${item.category || '未分类'} / 月售 ${item.monthlySales || 0}）`, 'active');
+          // 继续往下走，进入需求解析 + 确认卡
+        } else if (choice.action === 'useIntentSuggestion') {
+          const suggestion = choice.suggestion;
+          const purposeMeta = PURPOSES.find(p => p.key === suggestion.purposeKey);
+          if (purposeMeta) selectPurpose(purposeMeta.key);
+          document.getElementById('promptInput').value = suggestion.subject;
+          updateCharCount();
+          addDebugLog('意图补全', `用户选择补全主体：${suggestion.subject}；用途：${purposeMeta?.imageType || '商品图'}；原因：${suggestion.reason}`, 'active');
+        } else if (choice.action === 'selectPurpose') {
+          // 选了一个用途 → 选中态 + 重新进入
+          selectPurpose(choice.key);
+          // 解除 loading 后递归重试（用户已经从拦截弹窗确认了用途）
+          btn.disabled = false;
+          btn.classList.remove('loading');
+          return checkRequirements();
+        } else if (choice.action === 'useDisambiguated') {
+          // 把输入替换为更明确的主语
+          document.getElementById('promptInput').value = choice.mainSubject;
+          updateCharCount();
+          // 暂存视觉词典，后面合并到解析结果
+          _pendingVisualDict = choice.visualDict;
+          // 继续往下走
+        }
+        // proceed：什么都不做，继续往下走
+      }
+
+      const currentPrompt = document.getElementById('promptInput').value.trim();
+      menuCandidatesForIntent = rankMenuCandidates(getMenu(), currentPrompt);
+      const intentDraft = inferMerchantIntent(currentPrompt, selectedPurpose, menuCandidatesForIntent);
+
+      // 如果用户选了图片用途，注入 user prompt 上下文，让 GLM-4-Flash 走预设 imageType
+      const effectivePrompt = selectedPurpose
+        ? `[图片用途：${selectedPurpose.imageType}]\n商品/主题：${currentPrompt}\n\n[系统预拆解的商家意图]\n${JSON.stringify(intentDraft, null, 2)}`
+        : `[商家原始输入]\n${currentPrompt}\n\n[系统预拆解的商家意图]\n${JSON.stringify(intentDraft, null, 2)}`;
+      const req = await parseRequirements(effectivePrompt);
+
+      // 强制锁定 imageType 为用户选的用途（防止模型推断偏移）
+      if (selectedPurpose) {
+        req.imageType = selectedPurpose.imageType;
+      }
+      req.marketingGoal = (!req.marketingGoal || req.marketingGoal === '未指定') ? intentDraft.marketingGoal : req.marketingGoal;
+      req.placement = (!req.placement || req.placement === '未指定') ? intentDraft.placement : req.placement;
+      req.scene = req.placement || req.scene || intentDraft.placement;
+      // 记录原始输入（用于 debug / 显示）
+      req.userInput = currentPrompt;
+
+      // 合并视觉词典数据到解析结果（让确认卡直接展示正确信息）
+      if (_pendingVisualDict) {
+        const vd = _pendingVisualDict;
+        if (vd.forbidden) {
+          req.avoid = (!req.avoid || req.avoid === '未指定')
+            ? vd.forbidden
+            : `${req.avoid}，${vd.forbidden}`;
+        }
+        _pendingVisualDict = null;
+      }
+
+      pendingRequirement = req;
+      showRequirementModal(req);
+      showToast(selectedPurpose ? `已按「${selectedPurpose.imageType}」理解，请确认` : '请确认理解后再生成', 'success');
+    } catch (err) {
+      showToast('需求理解失败：' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
+  }
+
+  // 渲染需求确认卡（字段可编辑 + 字段级 AI 优化）
+  function showRequirementModal(req) {
+    resetRequirementConfirmButton();
+    // 在需求对象上记录当前尺寸（用户切换尺寸时会被改）
+    if (!req.size) {
+      req.size = document.getElementById('sizeSelect').value;
+    }
+
+    const fields = [
+      { key: 'imageType', label: '图片类型' },
+      { key: 'mainSubject', label: '主体商品' },
+      { key: 'marketingGoal', label: '营销目的' },
+      { key: 'placement', label: '使用位置' },
+      { key: 'style', label: '风格倾向' },
+      { key: 'background', label: '背景/构图' },
+      { key: 'avoid', label: '避免出现' },
+    ];
+    const grid = document.getElementById('requirementGrid');
+    grid.innerHTML = fields.map(f => {
+      const v = (req[f.key] || '').trim();
+      const empty = !v || v === '未指定';
+      return `
+        <div class="requirement-item">
+          <div class="requirement-label">${f.label}</div>
+          <div class="requirement-value ${empty ? 'empty' : ''}"
+               contenteditable="true"
+               data-field="${f.key}"
+               data-original="${escapeHtml(v)}">${escapeHtml(v) || '（未指定）'}</div>
+          <button class="requirement-ai-btn"
+                  data-ai-field="${f.key}"
+                  title="让 AI 重新优化这一项"
+                  onclick="optimizeField('${f.key}')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.5 5.7 21l2.3-7.2-6-4.4h7.6z"/></svg>
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    // 编辑同步：把用户输入写回 pendingRequirement
+    grid.querySelectorAll('.requirement-value').forEach(el => {
+      el.addEventListener('input', () => {
+        const key = el.dataset.field;
+        if (!pendingRequirement) return;
+        const text = el.textContent.trim();
+        pendingRequirement[key] = text;
+        if (key === 'placement') pendingRequirement.scene = text;
+        // 去掉 empty 状态
+        if (text) el.classList.remove('empty');
+        // 改完顺手把 optimizedPrompt 重生成一次
+        regenerateOptimizedPromptFromFields();
+      });
+    });
+
+    document.getElementById('requirementPromptPreview').textContent = req.optimizedPrompt || '';
+    document.getElementById('requirementModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    updateQuickSizeMeta();
+  }
+
+  function resetRequirementConfirmButton() {
+    const btn = document.getElementById('requirementConfirmBtn');
+    if (!btn) return;
+    btn.disabled = false;
+    btn.textContent = '确认生成';
+  }
+
+  // 字段编辑后，重生成 optimizedPrompt（用 prompt 模板，不调 API）
+  function regenerateOptimizedPromptFromFields() {
+    if (!pendingRequirement) return;
+    const r = pendingRequirement;
+    const parts = [];
+    if (r.mainSubject && r.mainSubject !== '未指定') parts.push(r.mainSubject);
+    if (r.imageType && r.imageType !== '未指定') parts.push(r.imageType);
+    if (r.marketingGoal && r.marketingGoal !== '未指定') parts.push(`目标是${r.marketingGoal}`);
+    if (r.style && r.style !== '未指定') parts.push(`${r.style}风格`);
+    if (r.background && r.background !== '未指定') parts.push(`背景为${r.background}`);
+    if (r.placement && r.placement !== '未指定') parts.push(`用于${r.placement}`);
+    if (r.avoid && r.avoid !== '未指定') parts.push(`避免出现${r.avoid}`);
+    const newPrompt = parts.join('，');
+    r.optimizedPrompt = newPrompt;
+    document.getElementById('requirementPromptPreview').textContent = newPrompt;
+  }
+
+  // 单字段 AI 优化
+  async function optimizeField(key) {
+    if (!pendingRequirement) return;
+    const fieldLabels = {
+      imageType: '图片类型',
+      mainSubject: '主体商品',
+      marketingGoal: '营销目的',
+      placement: '使用位置',
+      style: '风格倾向',
+      background: '背景/构图',
+      avoid: '避免出现',
+    };
+
+    const btn = document.querySelector(`.requirement-ai-btn[data-ai-field="${key}"]`);
+    if (key === 'style' || key === 'background') {
+      await changeVisualPlan(btn);
+      return;
+    }
+    if (btn) btn.classList.add('loading');
+
+    try {
+      const ctx = JSON.stringify(pendingRequirement, null, 2);
+      const currentVal = pendingRequirement[key] || '';
+      const newVal = await callRequirementApi(
+        `你是商家生图需求助手。当前需求对象（JSON）：\n${ctx}\n\n请只重新生成 "${fieldLabels[key]}"（key = "${key}"）这一项，给一个更专业、更适合 ${pendingRequirement.imageType || '商业场景'} 的版本。\n当前值："${currentVal}"\n\n严格输出 JSON：{"${key}": "新值"}，不要其他任何字符。`
+      );
+      const parsed = extractJsonSafe(newVal);
+      if (parsed && typeof parsed[key] === 'string') {
+        pendingRequirement[key] = parsed[key].trim();
+        if (key === 'placement') pendingRequirement.scene = pendingRequirement[key];
+        // 更新 UI
+        const el = document.querySelector(`.requirement-value[data-field="${key}"]`);
+        if (el) {
+          el.textContent = pendingRequirement[key];
+          el.classList.remove('empty');
+        }
+        regenerateOptimizedPromptFromFields();
+        addDebugLog('字段优化', `${fieldLabels[key]} 已由 AI 重新生成。`, 'success');
+      } else {
+        throw new Error('模型未返回有效 JSON');
+      }
+    } catch (err) {
+      showToast('字段优化失败：' + err.message, 'error');
+    } finally {
+      if (btn) btn.classList.remove('loading');
+    }
+  }
+
+  // AI 整体重写
+  async function rewriteAllFields() {
+    if (!pendingRequirement) return;
+    const btn = document.querySelector('.title-ai-btn');
+    if (btn) btn.classList.add('loading');
+    try {
+      const ctx = JSON.stringify(pendingRequirement, null, 2);
+      const newReq = await callRequirementApi(
+        `你是商家生图需求助手。当前需求对象（JSON）：\n${ctx}\n\n请整体重新理解并重写，给出更专业、更适合商业场景的版本。保持输出语言与 user 原文一致。\n\n严格输出完整 JSON：\n{\n  "imageType": "...",\n  "mainSubject": "...",\n  "marketingGoal": "...",\n  "placement": "...",\n  "scene": "...",\n  "style": "...",\n  "background": "...",\n  "avoid": "...",\n  "optimizedPrompt": "..."\n}\n不要其他任何字符。`
+      );
+      const parsed = extractJsonSafe(newReq);
+      if (!parsed) throw new Error('模型未按 JSON 格式输出');
+      ['imageType', 'mainSubject', 'marketingGoal', 'placement', 'scene', 'style', 'background', 'avoid', 'optimizedPrompt'].forEach(k => {
+        if (parsed[k] != null) {
+          pendingRequirement[k] = parsed[k];
+          const el = document.querySelector(`.requirement-value[data-field="${k}"]`);
+          if (el) {
+            el.textContent = parsed[k];
+            el.classList.remove('empty');
+          }
+        }
+      });
+      if (pendingRequirement.placement) pendingRequirement.scene = pendingRequirement.placement;
+      document.getElementById('requirementPromptPreview').textContent = pendingRequirement.optimizedPrompt || '';
+      addDebugLog('整体重写', 'AI 已整体重写所有需求字段。', 'success');
+    } catch (err) {
+      showToast('整体重写失败：' + err.message, 'error');
+    } finally {
+      if (btn) btn.classList.remove('loading');
+    }
+  }
+
+  // 通用：调用 GLM-4-Flash 返回纯文本（让调用方自己解析 JSON）
+  async function callRequirementApi(userContent) {
+    const apiKey = localStorage.getItem('prompt_optimizer_api_key') || OPTIMIZE_API_KEY;
+    const res = await fetchWithTimeout('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'glm-4-flash',
+        messages: [
+          { role: 'system', content: '你是严格遵循 JSON 输出的助手。严禁返回 JSON 之外的任何字符。' },
+          { role: 'user', content: userContent }
+        ]
+      })
+    }, 30000);
+    if (!res.ok) {
+      let msg = `请求失败 (${res.status})`;
+      try { const e = await res.json(); if (e.error?.message) msg = e.error.message; } catch {}
+      throw new Error(msg);
+    }
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || '接口错误');
+    return data.choices?.[0]?.message?.content || '';
+  }
+
+  function updateRequirementField(key, value) {
+    if (!pendingRequirement || value == null) return;
+    const text = String(value).trim();
+    if (!text) return;
+    pendingRequirement[key] = text;
+    if (key === 'placement') pendingRequirement.scene = text;
+    const el = document.querySelector(`.requirement-value[data-field="${key}"]`);
+    if (el) {
+      el.textContent = text;
+      el.classList.remove('empty');
+    }
+  }
+
+  // 换一种风格：生成另一套视觉方案，同时更新风格、背景/构图和提示词预览
+  async function changeVisualPlan(triggerBtn) {
+    if (!pendingRequirement) return;
+    const btn = triggerBtn || document.getElementById('quickStyleBtn');
+    if (btn) btn.classList.add('loading');
+    try {
+      const ctx = JSON.stringify({
+        mainSubject: pendingRequirement.mainSubject,
+        imageType: pendingRequirement.imageType,
+        marketingGoal: pendingRequirement.marketingGoal,
+        placement: pendingRequirement.placement || pendingRequirement.scene,
+        currentStyle: pendingRequirement.style,
+        currentBackground: pendingRequirement.background,
+        avoid: pendingRequirement.avoid,
+      }, null, 2);
+      const newVal = await callRequirementApi(
+        `你是美团商家生图视觉方案助手。当前需求对象：\n${ctx}\n\n请不要优化、润色或扩写当前风格，而是为同一个商品主体生成"另一套明显不同但仍适合美团商家场景"的视觉方案。\n\n要求：\n1. 不改变 mainSubject、imageType、marketingGoal、placement。\n2. style 必须是一句具体视觉方向，结合商品主体、营销目的和美团使用位置，不要只是泛标签。\n3. background 必须和新 style 联动，写清楚背景材质、构图、光线、主体摆放；如果是活动海报，要说明标题/价格/优惠信息预留区域。\n4. 必须避开当前 currentStyle 和 currentBackground 的主要视觉方向，不要只是把原句改得更专业。\n5. optimizedPrompt 用新 style + 新 background 生成一段可直接预览的中文生图提示词，包含主体、材质/质地、光线、构图、使用场景和避免项。\n\n严格输出 JSON：\n{\n  "style": "新的具体视觉方向",\n  "background": "新的背景与构图",\n  "optimizedPrompt": "基于新视觉方案生成的提示词预览"\n}\n不要其他任何字符。`
+      );
+      const parsed = extractJsonSafe(newVal);
+      if (parsed && typeof parsed.style === 'string' && typeof parsed.background === 'string') {
+        updateRequirementField('style', parsed.style);
+        updateRequirementField('background', parsed.background);
+        if (typeof parsed.optimizedPrompt === 'string' && parsed.optimizedPrompt.trim()) {
+          pendingRequirement.optimizedPrompt = parsed.optimizedPrompt.trim();
+          document.getElementById('requirementPromptPreview').textContent = pendingRequirement.optimizedPrompt;
+        } else {
+          regenerateOptimizedPromptFromFields();
+        }
+        addDebugLog('换一种风格', `新风格：${pendingRequirement.style}\n新构图：${pendingRequirement.background}`, 'success');
+      } else {
+        throw new Error('模型未返回有效的 style 和 background');
+      }
+    } catch (err) {
+      showToast('换风格失败：' + err.message, 'error');
+    } finally {
+      if (btn) btn.classList.remove('loading');
+    }
+  }
+
+  function changeStyle() {
+    return changeVisualPlan(document.getElementById('quickStyleBtn'));
+  }
+
+  // 换尺寸：在 7 个支持的尺寸中循环切换
+  const SIZE_OPTIONS = ['1024*1024', '1280*720', '720*1280', '1024*768', '768*1024', '1152*896', '896*1152'];
+  const SIZE_LABELS = {
+    '1024*1024': '1:1 · 商品列表图',
+    '1280*720':  '16:9 · 店铺头图',
+    '720*1280':  '9:16 · 竖版海报',
+    '1024*768':  '4:3 · 套餐/菜单配图',
+    '768*1024':  '3:4 · 竖版展示',
+    '1152*896':  '5:4 · 宽幅展示',
+    '896*1152':  '4:5 · 社交媒体图',
+  };
+  function changeSize() {
+    if (!pendingRequirement) return;
+    const cur = pendingRequirement.size || document.getElementById('sizeSelect').value;
+    const idx = SIZE_OPTIONS.indexOf(cur);
+    const next = SIZE_OPTIONS[(idx + 1) % SIZE_OPTIONS.length];
+    pendingRequirement.size = next;
+    updateQuickSizeMeta();
+    addDebugLog('换尺寸', `切换到 ${SIZE_LABELS[next]}`, 'active');
+  }
+  function updateQuickSizeMeta() {
+    const el = document.getElementById('quickSizeMeta');
+    if (!el || !pendingRequirement) return;
+    el.textContent = SIZE_LABELS[pendingRequirement.size] || '';
+  }
+
+  function closeRequirementModal() {
+    document.getElementById('requirementModal').classList.remove('open');
+    document.body.style.overflow = '';
+    pendingRequirement = null;
+    resetRequirementConfirmButton();
+  }
+
+  // 第二步：用户点"确认生成"后，先编译提示词，再调用 wan2.7
+  async function confirmRequirement() {
+    const req = pendingRequirement;
+    if (!req) {
+      closeRequirementModal();
+      return;
+    }
+
+    const confirmBtn = document.getElementById('requirementConfirmBtn');
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = '正在编译提示词...';
+    }
+
+    try {
+      const compiled = await compilePrompt(req);
+      req.optimizedPrompt = compiled;
+      closeRequirementModal();
+      await doGenerate(req);
+    } catch (err) {
+      showToast('提示词编译失败：' + err.message, 'error');
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = '确认生成';
+      }
+    }
+  }
+
+  // Layer 2：提示词编译 —— 基于图片类型和商家上下文生成结构化提示词
+  async function compilePrompt(req) {
+    const savedCompilePrompt = localStorage.getItem('prompt_compile_prompt');
+    const savedOptimizeKey = localStorage.getItem('prompt_optimizer_api_key');
+    const compileSystemPrompt = buildCompileSystemPrompt(savedCompilePrompt || DEFAULT_COMPILE_PROMPT);
+    const apiKey = savedOptimizeKey || OPTIMIZE_API_KEY;
+    const compilePromptSource = savedCompilePrompt ? '后台自定义编译 prompt' : '默认编译 prompt';
+
+    const payload = cleanPromptPayload({
+      imageType: req.imageType,
+      mainSubject: req.mainSubject,
+      marketingGoal: req.marketingGoal,
+      placement: req.placement || req.scene,
+      scene: req.placement || req.scene,
+      style: req.style,
+      background: req.background,
+      avoid: req.avoid,
+    });
+
+    // 注入菜品视觉词典
+    const dictHit = lookupVisualDict(req.mainSubject) || lookupVisualDict(req.userInput);
+    if (dictHit) {
+      payload._visualDict = {
+        explanation: dictHit.explanation,
+        visualSubject: dictHit.visualSubject,
+        container: dictHit.container,
+        composition: dictHit.composition,
+        forbidden: dictHit.forbidden,
+        recommendedPrompt: dictHit.recommendedPrompt,
+      };
+      // 合并禁止元素到 avoid
+      if (dictHit.forbidden) {
+        payload.avoid = payload.avoid === '未指定'
+          ? dictHit.forbidden
+          : `${payload.avoid}，${dictHit.forbidden}`;
+      }
+    }
+
+    const userContent = JSON.stringify(payload, null, 2);
+
+    addDebugLog('开始提示词编译',
+      `图片类型：${req.imageType}\n主体：${req.mainSubject}`
+      + `\n编译提示词来源：${compilePromptSource}`
+      + `\n当前风格字段：${payload.style || '未提供，由编译提示词按品类判断'}`
+      + (dictHit ? `\n视觉词典命中：${dictHit.name}（禁止：${dictHit.forbidden}）` : '\n视觉词典：未命中')
+      + `\n将按「${req.imageType}」模板编译提示词。`, 'active');
+
+    const res = await fetchWithTimeout('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'glm-4-flash',
+        messages: [
+          { role: 'system', content: compileSystemPrompt },
+          { role: 'user', content: userContent }
+        ]
+      })
+    }, 30000);
+
+    if (!res.ok) {
+      let msg = `编译请求失败 (${res.status})`;
+      try { const e = await res.json(); if (e.error?.message) msg = e.error.message; } catch {}
+      addDebugLog('编译失败', msg, 'error');
+      throw new Error(msg);
+    }
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || '编译出错');
+    const compiled = (data.choices?.[0]?.message?.content || '').trim();
+    if (!compiled) throw new Error('编译返回为空');
+
+    addDebugLog('编译完成', `编译后提示词（${compiled.length} 字）：\n${compiled}`, 'success');
+    return compiled;
+  }
+
+  function cleanPromptPayload(payload) {
+    return Object.fromEntries(
+      Object.entries(payload).filter(([, value]) => {
+        if (value == null) return false;
+        const text = String(value).trim();
+        return text && text !== '未指定';
+      })
+    );
+  }
+
+  function buildCompileSystemPrompt(basePrompt) {
+    return `${basePrompt}
+
+【运行时补充约束】
+- 必须优先保留输入 JSON 中的 style 字段，不要在最终提示词中无故改成"真实商业摄影风格"。
+- 如果 style 是日系清新、奶油色调、暗调美食摄影、国潮风、杂志封面风等，最终提示词必须体现该风格。
+- 如果输入 JSON 没有 style 字段，必须根据 mainSubject、imageType、marketingGoal、placement 动态生成一个具体视觉方向，不要默认使用"真实商业摄影"。
+- 只有当 style 本身明确是"真实商业摄影"时，才输出真实商业摄影风格。`;
+  }
+
+  // 真正生图：使用需求解析拿到的 optimizedPrompt，串行调用 wan2.7
+  async function doGenerate(req) {
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    const finalPrompt = req.optimizedPrompt;
+    const size = req.size || document.getElementById('sizeSelect').value;
+    const quality = document.getElementById('qualitySelect').value;
+    const n = parseInt(document.getElementById('countSelect').value, 10);
+
+    if (!apiKey) { showToast('请先填写 API Key', 'error'); return; }
+
+    saveApiKey();
+
+    // 把确认后的提示词回填到输入框，方便用户查看
+    document.getElementById('promptInput').value = finalPrompt;
+    updateCharCount();
+
+    addDebugLog('确认生成', `用户已确认需求。开始调用 wan2.7 生成 ${n} 张图片。\n最终提示词长度：${finalPrompt.length} 字符。`, 'success');
+
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    try {
+      // Add placeholder cards
+      for (let i = 0; i < n; i++) {
+        addLoadingCard(finalPrompt, size);
+      }
+
+      // 串行调用，避免并发触发 wan2.7 速率限制
+      const results = [];
+      for (let i = 0; i < n; i++) {
+        try {
+          const url = await callApi(apiKey, finalPrompt, size, quality);
+          results.push({ status: 'fulfilled', value: url });
+        } catch (e) {
+          results.push({ status: 'rejected', reason: e });
+        }
+        if (i < n - 1) {
+          await new Promise(r => setTimeout(r, 800));
+        }
+      }
+
+      // Replace loading cards with real images
+      const loadingCards = document.querySelectorAll('.image-card[data-loading="true"]');
+      results.forEach((result, idx) => {
+        if (loadingCards[idx]) {
+          if (result.status === 'fulfilled') {
+            replaceCard(loadingCards[idx], finalPrompt, size, result.value);
+          } else {
+            replaceCard(loadingCards[idx], finalPrompt, size, null, result.reason.message);
+          }
+        }
+      });
+
+      const successCount = results.filter(r => r.status === 'fulfilled').length;
+      const failCount = results.length - successCount;
+      if (failCount === 0) {
+        showToast(`${n} 张图片生成完成`, 'success');
+      } else {
+        showToast(`生成完成：成功 ${successCount}，失败 ${failCount}`, 'error');
+      }
+    } catch (err) {
+      showToast('生成失败：' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+    }
+  }
+
+  async function callApi(apiKey, prompt, size, quality) {
+    // DashScope 原生 API 请求体（wan2.7-image）
+    const requestBody = {
+      model: 'wan2.7-image',
+      input: {
+        messages: [
+          { role: 'user', content: [{ text: prompt }] }
+        ]
+      },
+      parameters: {
+        size,
+        n: 1,
+      },
+    };
+    const endpoint = `${API_BASE}/services/aigc/multimodal-generation/generation`;
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    addDebugLog('发送生图请求', `POST ${endpoint}\n实际请求体：\n${JSON.stringify(requestBody, null, 2)}`, 'active');
+    addDebugLog('生图响应状态', `HTTP ${res.status} ${res.statusText || ''}`.trim(), res.ok ? 'success' : 'error');
+
+    if (!res.ok) {
+      let msg = `请求失败 (${res.status})`;
+      try {
+        const errBody = await res.json();
+        if (errBody.message) msg = errBody.message;
+      } catch {}
+      throw new Error(msg);
+    }
+
+    const data = await res.json();
+    if (data.code) throw new Error(data.message || '生成出错');
+
+    // DashScope 响应：output.choices[0].message.content[?type=image].image
+    const contents = data.output?.choices?.[0]?.message?.content || [];
+    const imageItem = contents.find(c => c.type === 'image' && c.image);
+    if (!imageItem) throw new Error('未在响应中找到图片 URL');
+    return imageItem.image;
+  }
+
+  function addLoadingCard(prompt, size) {
+    const grid = document.getElementById('galleryGrid');
+    const empty = document.getElementById('galleryEmpty');
+    if (empty) empty.remove();
+
+    const card = document.createElement('div');
+    card.className = 'image-card';
+    card.setAttribute('data-loading', 'true');
+    card.style.animationDelay = `${images.length * 0.05}s`;
+    card.innerHTML = `
+      <div class="img-wrap">
+        <div class="img-loading">
+          <div class="spinner-lg"></div>
+          <span>正在生成...</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="card-prompt">${escapeHtml(prompt)}</p>
+        <div class="card-meta">
+          <span class="card-size">${size}</span>
+          <div class="card-actions">
+            <button class="card-btn danger" onclick="removeCard(this)" title="删除">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    grid.prepend(card);
+    images.push({ prompt, size, url: null });
+    updateCount();
+  }
+
+  function replaceCard(card, prompt, size, url, errorMsg) {
+    card.setAttribute('data-loading', 'false');
+    if (url) {
+      card.querySelector('.img-wrap').innerHTML = `
+        <img src="${url}" alt="生成图片" loading="lazy" />
+      `;
+      card.querySelector('.card-actions').innerHTML = `
+        <button class="card-btn" onclick="openLightbox('${url}')" title="预览大图">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+        </button>
+        <button class="card-btn" onclick="downloadImage('${url}')" title="下载">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        </button>
+        <button class="card-btn danger" onclick="removeCard(this)" title="删除">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+      `;
+      card.onclick = () => openLightbox(url);
+    } else {
+      card.querySelector('.img-wrap').innerHTML = `
+        <div class="img-loading" style="background:#FEF2F2;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span style="color:#DC2626">生成失败</span>
+          <span style="color:#A8A29E;font-size:11px">${escapeHtml(errorMsg || '未知错误')}</span>
+        </div>
+      `;
+    }
+  }
+
+  function removeCard(btn) {
+    const card = btn.closest('.image-card');
+    card.style.transition = 'all 0.25s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+      card.remove();
+      updateCount();
+      if (document.querySelectorAll('.image-card').length === 0) {
+        showEmpty();
+      }
+    }, 250);
+  }
+
+  function clearAll() {
+    const cards = document.querySelectorAll('.image-card');
+    cards.forEach((card, i) => {
+      card.style.transition = `all 0.25s ${i * 0.04}s`;
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.9)';
+    });
+    setTimeout(() => {
+      cards.forEach(c => c.remove());
+      showEmpty();
+      updateCount();
+    }, 300);
+  }
+
+  // ── Gallery helpers ───────────────────────────────────
+  function showEmpty() {
+    const grid = document.getElementById('galleryGrid');
+    if (!grid.querySelector('.gallery-empty')) {
+      grid.innerHTML = `
+        <div class="gallery-empty" id="galleryEmpty">
+          <div class="gallery-empty-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.35"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <p>还没有生成记录，试试上面的描述吧</p>
+        </div>
+      `;
+    }
+  }
+
+  function updateCount() {
+    const count = document.querySelectorAll('.image-card:not([data-loading="true"])').length;
+    document.getElementById('galleryCount').textContent = `${count} 张`;
+  }
+
+  // ── Lightbox ──────────────────────────────────────────
+  function openLightbox(url) {
+    if (!url) return;
+    document.getElementById('lightboxImg').src = url;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox(e) {
+    if (e.target.tagName === 'BUTTON' || e.currentTarget === e.target || e.target.tagName === 'DIV') {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  }
+
+  // ── Download ─────────────────────────────────────────
+  async function downloadImage(url) {
+    showToast('正在下载...', 'success');
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `生图_${Date.now()}.png`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      showToast('下载失败，请右键保存图片', 'error');
+    }
+  }
+
+  // ── Toast ─────────────────────────────────────────────
+  function showToast(msg, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  // ── Utils ─────────────────────────────────────────────
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ── Debug Drawer ──────────────────────────────────────
+  const optimizerDebugState = {
+    source: '-',
+    endpoint: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+    model: 'glm-4-flash',
+    apiKeyMasked: '-',
+    userPrompt: '',
+    systemPrompt: '',
+    requestPayload: '',
+    responseStatus: '-',
+    responseBody: '',
+    optimizedPrompt: '',
+    error: '',
+    logs: []
+  };
+
+  function formatTime(date = new Date()) {
+    return date.toLocaleTimeString('zh-CN', { hour12: false });
+  }
+
+  function maskApiKey(key) {
+    if (!key) return '-';
+    if (key.length <= 8) return '*'.repeat(key.length);
+    return `${key.slice(0, 4)}...${key.slice(-4)}`;
+  }
+
+  function toggleDebugDrawer(forceOpen) {
+    const drawer = document.getElementById('debugDrawer');
+    const shouldOpen = typeof forceOpen === 'boolean' ? forceOpen : !drawer.classList.contains('open');
+    drawer.classList.toggle('open', shouldOpen);
+  }
+
+  function clearDebugState() {
+    optimizerDebugState.source = '-';
+    optimizerDebugState.apiKeyMasked = '-';
+    optimizerDebugState.userPrompt = '';
+    optimizerDebugState.systemPrompt = '';
+    optimizerDebugState.requestPayload = '';
+    optimizerDebugState.responseStatus = '-';
+    optimizerDebugState.responseBody = '';
+    optimizerDebugState.optimizedPrompt = '';
+    optimizerDebugState.error = '';
+    optimizerDebugState.logs = [];
+    renderDebugDrawer();
+  }
+
+  function addDebugLog(title, content, type = 'active') {
+    optimizerDebugState.logs.unshift({
+      time: formatTime(),
+      title,
+      content,
+      type
+    });
+    renderDebugDrawer();
+  }
+
+  function renderDebugDrawer() {
+    const body = document.getElementById('debugBody');
+    const hasData = optimizerDebugState.logs.length ||
+      optimizerDebugState.systemPrompt ||
+      optimizerDebugState.userPrompt ||
+      optimizerDebugState.optimizedPrompt;
+
+    if (!hasData) {
+      body.innerHTML = `
+        <div class="debug-empty">点击“AI 优化提示词”后，这里会展示系统提示词读取、接口请求、响应结果和最终优化词。</div>
+      `;
+      return;
+    }
+
+    const logHtml = optimizerDebugState.logs.length
+      ? optimizerDebugState.logs.map(log => `
+          <div class="debug-log-item ${log.type}">
+            <div class="debug-log-time">${escapeHtml(log.time)}</div>
+            <div class="debug-log-title">${escapeHtml(log.title)}</div>
+            <div class="debug-log-content">${escapeHtml(log.content)}</div>
+          </div>
+        `).join('')
+      : `<div class="debug-empty">暂无流程日志</div>`;
+
+    body.innerHTML = `
+      <div class="debug-section">
+        <div class="debug-label">调用概览</div>
+        <div class="debug-meta">
+          <div class="debug-stat">
+            <div class="debug-stat-key">系统提示词来源</div>
+            <div class="debug-stat-value">${escapeHtml(optimizerDebugState.source)}</div>
+          </div>
+          <div class="debug-stat">
+            <div class="debug-stat-key">模型</div>
+            <div class="debug-stat-value">${escapeHtml(optimizerDebugState.model)}</div>
+          </div>
+          <div class="debug-stat">
+            <div class="debug-stat-key">接口地址</div>
+            <div class="debug-stat-value">${escapeHtml(optimizerDebugState.endpoint)}</div>
+          </div>
+          <div class="debug-stat">
+            <div class="debug-stat-key">优化 API Key</div>
+            <div class="debug-stat-value">${escapeHtml(optimizerDebugState.apiKeyMasked)}</div>
+          </div>
+          <div class="debug-stat">
+            <div class="debug-stat-key">接口状态</div>
+            <div class="debug-stat-value">${escapeHtml(optimizerDebugState.responseStatus || '-')}</div>
+          </div>
+          <div class="debug-stat">
+            <div class="debug-stat-key">错误</div>
+            <div class="debug-stat-value">${escapeHtml(optimizerDebugState.error || '-')}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="debug-section">
+        <div class="debug-label">用户原始提示词</div>
+        <div class="debug-code">${escapeHtml(optimizerDebugState.userPrompt || '-')}</div>
+      </div>
+
+      <div class="debug-section">
+        <div class="debug-label">读取到的系统提示词</div>
+        <div class="debug-code">${escapeHtml(optimizerDebugState.systemPrompt || '-')}</div>
+      </div>
+
+      <div class="debug-section">
+        <div class="debug-label">请求体</div>
+        <div class="debug-code">${escapeHtml(optimizerDebugState.requestPayload || '-')}</div>
+      </div>
+
+      <div class="debug-section">
+        <div class="debug-label">接口原始响应</div>
+        <div class="debug-code">${escapeHtml(optimizerDebugState.responseBody || '-')}</div>
+      </div>
+
+      <div class="debug-section">
+        <div class="debug-label">优化后的提示词</div>
+        <div class="debug-code">${escapeHtml(optimizerDebugState.optimizedPrompt || '-')}</div>
+      </div>
+
+      <div class="debug-section">
+        <div class="debug-label">流程日志</div>
+        <div class="debug-log-list">${logHtml}</div>
+      </div>
+    `;
+  }
+
+  // ── Admin Panel ──────────────────────────────────────
+  function openAdminPanel() {
+    const panel = document.getElementById('adminPanel');
+    panel.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    const savedRequirementPrompt = localStorage.getItem('requirement_parser_prompt');
+    const savedCompilePrompt = localStorage.getItem('prompt_compile_prompt');
+    const savedOptimizeKey = localStorage.getItem('prompt_optimizer_api_key');
+
+    document.getElementById('requirementPromptInput').value = savedRequirementPrompt || DEFAULT_REQUIREMENT_PROMPT;
+    document.getElementById('compilePromptInput').value = savedCompilePrompt || DEFAULT_COMPILE_PROMPT;
+    document.getElementById('optimizeApiKeyInput').value = savedOptimizeKey || '';
+
+    updateRequirementPromptLength();
+    updateCompilePromptLength();
+    renderMenuList();
+  }
+
+  function closeAdminPanel() {
+    document.getElementById('adminPanel').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function updateCompilePromptLength() {
+    const len = document.getElementById('compilePromptInput').value.length;
+    document.getElementById('compilePromptLength').textContent = `${len} 字符`;
+  }
+
+  function updateRequirementPromptLength() {
+    const len = document.getElementById('requirementPromptInput').value.length;
+    document.getElementById('requirementPromptLength').textContent = `${len} 字符`;
+  }
+
+  function resetCompilePrompt() {
+    if (confirm('确定要恢复默认编译提示词吗？')) {
+      document.getElementById('compilePromptInput').value = DEFAULT_COMPILE_PROMPT;
+      updateCompilePromptLength();
+    }
+  }
+
+  function resetRequirementPrompt() {
+    if (confirm('确定要恢复默认需求解析系统提示词吗？')) {
+      document.getElementById('requirementPromptInput').value = DEFAULT_REQUIREMENT_PROMPT;
+      updateRequirementPromptLength();
+    }
+  }
+
+  function saveAdminConfig() {
+    const requirementPrompt = document.getElementById('requirementPromptInput').value;
+    const compilePrompt = document.getElementById('compilePromptInput').value;
+    const optimizeKey = document.getElementById('optimizeApiKeyInput').value.trim();
+
+    if (!requirementPrompt) {
+      showToast('需求解析系统提示词不能为空', 'error');
+      return;
+    }
+    if (!compilePrompt) {
+      showToast('提示词编译系统提示词不能为空', 'error');
+      return;
+    }
+
+    localStorage.setItem('requirement_parser_prompt', requirementPrompt);
+    localStorage.setItem('prompt_compile_prompt', compilePrompt);
+
+    if (optimizeKey) {
+      localStorage.setItem('prompt_optimizer_api_key', optimizeKey);
+    } else {
+      localStorage.removeItem('prompt_optimizer_api_key');
+    }
+
+    closeAdminPanel();
+    showToast('配置已保存', 'success');
+  }
+
+  function toggleOptimizeKeyVisibility() {
+    const input = document.getElementById('optimizeApiKeyInput');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  // ── 菜单管理 ──────────────────────────────────────
+  function addMenuItem() {
+    const name = document.getElementById('menuInputName').value.trim();
+    const category = document.getElementById('menuInputCategory').value.trim();
+    const price = parseFloat(document.getElementById('menuInputPrice').value) || 0;
+    const sales = parseInt(document.getElementById('menuInputSales').value, 10) || 0;
+    const isSignature = document.getElementById('menuInputSignature').checked;
+    if (!name) { showToast('请填写商品名', 'error'); return; }
+    const menu = getMenu();
+    menu.push({
+      id: genMenuId(),
+      name, category, price, monthlySales: sales, isSignature,
+      hasImage: false,
+      lastUpdatedAt: Math.floor(Date.now() / 1000),
+    });
+    setMenu(menu);
+    // 清空表单（仅清商品名）
+    document.getElementById('menuInputName').value = '';
+    renderMenuList();
+  }
+
+  function deleteMenuItem(id) {
+    const menu = getMenu().filter(m => m.id !== id);
+    setMenu(menu);
+    renderMenuList();
+  }
+
+  function toggleMenuItem(id, field) {
+    const menu = getMenu();
+    const item = menu.find(m => m.id === id);
+    if (!item) return;
+    if (field === 'signature') item.isSignature = !item.isSignature;
+    else if (field === 'hasImage') item.hasImage = !item.hasImage;
+    item.lastUpdatedAt = Math.floor(Date.now() / 1000);
+    setMenu(menu);
+    renderMenuList();
+  }
+
+  function resetMenu() {
+    if (confirm('恢复示例菜单将清空你已编辑的所有 SKU，确定吗？')) {
+      localStorage.removeItem('merchant_menu');
+      renderMenuList();
+      showToast('已恢复示例菜单', 'success');
+    }
+  }
+
+  function renderMenuList() {
+    const listEl = document.getElementById('menuList');
+    if (!listEl) return;
+    const menu = getMenu();
+    document.getElementById('menuCount').textContent = `${menu.length} 个 SKU`;
+    if (menu.length === 0) {
+      listEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted); font-size: 12px;">菜单为空，请在上面添加 SKU</div>';
+      return;
+    }
+    // 按 招牌 > 销量 排序展示
+    const sorted = [...menu].sort((a, b) => {
+      if ((a.isSignature?1:0) !== (b.isSignature?1:0)) return (b.isSignature?1:0) - (a.isSignature?1:0);
+      return (b.monthlySales || 0) - (a.monthlySales || 0);
+    });
+    listEl.innerHTML = `
+      <div style="display: grid; grid-template-columns: 2fr 1fr 60px 60px 60px 50px 32px; gap: 6px; padding: 8px 10px; background: var(--bg-soft); font-size: 11px; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border);">
+        <div>商品</div><div>类目</div><div style="text-align:right;">价格</div><div style="text-align:right;">月售</div><div style="text-align:center;">图</div><div style="text-align:center;">招牌</div><div></div>
+      </div>
+      ${sorted.map(item => `
+        <div style="display: grid; grid-template-columns: 2fr 1fr 60px 60px 60px 50px 32px; gap: 6px; padding: 8px 10px; align-items: center; border-bottom: 1px solid var(--border); font-size: 12px;">
+          <div style="font-weight: 500; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(item.name)}</div>
+          <div style="color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(item.category || '-')}</div>
+          <div style="text-align:right; color: var(--text-secondary);">¥${item.price || 0}</div>
+          <div style="text-align:right; color: ${item.monthlySales > 500 ? 'var(--accent)' : 'var(--text-secondary)'}; font-weight: ${item.monthlySales > 500 ? '600' : '400'};">${item.monthlySales || 0}</div>
+          <div style="text-align:center;">
+            <input type="checkbox" ${item.hasImage ? 'checked' : ''} onchange="toggleMenuItem('${item.id}','hasImage')" title="是否已有商品图" style="cursor:pointer;" />
+          </div>
+          <div style="text-align:center;">
+            <input type="checkbox" ${item.isSignature ? 'checked' : ''} onchange="toggleMenuItem('${item.id}','signature')" title="是否招牌商品" style="cursor:pointer;" />
+          </div>
+          <button type="button" onclick="deleteMenuItem('${item.id}')" title="删除" style="background: transparent; border: none; color: #c2410c; cursor: pointer; font-size: 14px; line-height: 1; padding: 0;">✕</button>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  // 添加系统提示词输入框的事件监听
+  document.addEventListener('DOMContentLoaded', () => {
+    const compilePromptInput = document.getElementById('compilePromptInput');
+    if (compilePromptInput) {
+      compilePromptInput.addEventListener('input', updateCompilePromptLength);
+    }
+    const requirementPromptInput = document.getElementById('requirementPromptInput');
+    if (requirementPromptInput) {
+      requirementPromptInput.addEventListener('input', updateRequirementPromptLength);
+    }
+  });
+
+  // ── Prompt Compiler (Layer 2) ────────────────────────
+  const OPTIMIZE_API_KEY = '9c34a48180154b75942e434befad3b5b.rf2XOTHFy7rxoLde';
+  const DEFAULT_COMPILE_PROMPT = `你是商家生图提示词编译器。你的任务是将已确认的需求字段"编译"为可直接发给生图模型的精确提示词。
+
+核心原则：
+- 不同图片类型的提示词结构完全不同，不是简单加长
+- 必须包含具体视觉细节（材质、颜色、光线、构图）
+- 必须包含负面提示（不要出现什么）
+- 必须考虑营销目的和最终使用位置（美团列表图、活动入口、店铺首页等）
+- 如果输入包含 marketingGoal 和 placement，必须体现在画面结构里，例如促销海报要预留活动信息区，商品图要突出点击转化，套餐图要突出份量感和组合关系
+
+各类型编译模板：
+
+【商品图】
+{商品名称}商品图，{容器/包装描述}，{食物/商品视觉细节：颜色、质地、配料、装饰}，主体居中，{背景描述（干净简洁）}，{画面风格}，柔和适配的商业布光，适合美团商品列表图。不要人物，不要错误文字，不要非本店 logo，不要复杂背景。
+
+【促销海报】
+{活动主题/营销目的}促销海报，主视觉是{商品描述}，画面{氛围：明亮/喜庆/清爽}，{季节/节日元素}，顶部预留活动标题区域，底部预留价格和优惠信息区域，适合{使用位置}。不要乱码文字，不要错误 logo，不要人物遮挡主体。
+
+【店铺头图】
+{店铺类型}店铺头图，{代表性商品组合描述}，画面{风格}，{色调和氛围}，横幅构图，商品陈列感，适合美团店铺首页头图。不要杂乱元素，不要模糊，不要不相关商品。
+
+【套餐图】
+{套餐名称}套餐图，{各组成商品描述}，摆放在{容器/托盘}上，{俯拍/平视}角度，{背景}，组合感强，份量感充足，体现{营销目的}，适合{使用位置}。不要单品特写，不要人物，不要错误文字。
+
+【菜单配图】
+{菜品名称}菜单配图，{食物细节描述}，{装盘方式}，{光线}，{背景}，精致感，适合菜单印刷或美团菜单列表。不要过度修饰，不要人物，不要文字。
+
+【新品上架图】
+{新品名称}新品上架宣传图，{商品视觉描述}，画面突出新鲜感（明亮、清新、有吸引力），{季节元素}，适合美团新品推荐位。不要旧产品，不要杂乱背景，不要错误文字。
+
+【节日营销图】
+{节日名称}主题{商品类型}营销图，{节日元素：装饰、色彩、符号}，{商品描述}，喜庆/温馨氛围，适合美团节日活动页面。不要其他节日元素混搭，不要错误文字，不要不相关商品。
+
+【招牌菜推荐图】
+{菜品名称}招牌推荐图，{食物最诱人的视觉细节}，{装盘和摆拍}，{光线：暖光、侧光}，画面突出品质感和招牌感，适合美团店铺招牌菜位。不要普通感，不要冷色调，不要人物。
+
+菜品视觉词典：
+如果输入中包含 _visualDict 字段，说明系统已识别该菜品的正确视觉含义。你必须：
+1. 严格参考 visualSubject 和 recommendedPrompt 描述视觉主体
+2. 严格遵守 forbidden 中的禁止元素，将其加入负面提示
+3. 参考 container 和 composition 确定容器和构图
+4. 不要按菜名字面意思理解（如"蚂蚁上树"不是蚂蚁和树）
+
+输出要求：
+- 只输出编译后的提示词，不要 JSON，不要解释，不要前缀
+- 30-120 字，一段话
+- 中文输出
+- 按照对应图片类型的模板结构组织，确保提示词的结构与图片类型匹配`;
+
+  // 需求解析的独立系统提示词：让模型严格返回智能拆解字段 + 优化后提示词
+  const DEFAULT_REQUIREMENT_PROMPT = `你是商家生图需求理解助手。商家会输入一句简短的图片描述（例如"奶茶"、"店铺开业海报"），你需要：
+
+1. 理解商家真实意图
+2. 补全商家没说但实际需要的细节（按常见商业场景合理推断）
+3. 将自然语言拆解为：主体商品 + 图片用途 + 营销目的 + 使用位置 + 风格倾向
+4. 输出一份可直接交给生图模型使用的提示词
+
+【输出格式】严格 JSON，不要任何额外文字、Markdown、代码块、注释、解释。直接以 { 开始，} 结束。
+
+{
+  "imageType": "图片类型（商品图 / 促销海报 / 店铺头图 / 菜单配图 / 朋友圈广告 等）",
+  "mainSubject": "主体商品或内容（要具体，例如'招牌珍珠奶茶'，不要只写'奶茶'）",
+  "marketingGoal": "营销目的（例如'周末满减活动转化' / '突出招牌菜品质感' / '新品曝光和点击转化'）",
+  "placement": "使用位置（美团商品列表图 / 美团店铺活动入口 / 店铺首页头图 / 菜单列表 / 朋友圈海报 等）",
+  "scene": "使用场景，可与 placement 保持一致",
+  "style": "画面风格（根据商品主体、美团场景、营销目的动态生成一句具体视觉方向）",
+  "background": "背景与构图（与 style 联动，说明背景材质、构图、光线、主体摆放和必要的文案区域）",
+  "avoid": "需要避免出现的内容（人物 / 错误文字 / 非本店品牌 Logo / 低分辨率 / 手指畸形 等）",
+  "optimizedPrompt": "为生图模型优化的中文提示词，30-100 词，包含主体细节、材质、光线、角度、风格、氛围、背景等"
+}
+
+【动态风格生成原则】不要使用固定品类映射表，不要把同类商品每次都写成同一种风格。请根据本次输入动态组合：
+- 商品主体：食材形态、颜色、质地、冷热属性、是否有汤汁/层次/切面/蒸汽/酱汁
+- 美团商家场景：商品列表、菜单配图、店铺活动入口、套餐展示、招牌推荐位、店铺头图
+- 营销目的：提升点击、突出招牌、突出清凉/热气/份量/性价比/高级感/新品感
+- 图片类型：商品图偏真实可点、海报偏转化和留白、套餐图偏组合关系、招牌图偏记忆点
+- 视觉差异：色调、光线、镜头距离、拍摄角度、背景材质、道具、留白、文案区域要具体，不要只写抽象形容词
+
+style 必须是一句具体视觉方向，不要只是"真实商业摄影"、"日系清新"这类泛标签。
+示例：
+- "夏日清凉透明感商品摄影，突出冰粉晶莹质地、红糖水层次和碎冰清爽感"
+- "暖调烟火气菜单摄影，突出牛肉饭热气、酱汁光泽和米饭颗粒感"
+- "高饱和美团活动海报风，突出炸鸡套餐份量、优惠转化和动感食欲"
+
+【动态构图生成原则】background 必须和 style 联动，写清楚画面如何摆、背景是什么、光线从哪里来、是否预留文案区：
+- 商品列表图：主体清晰、背景克制、点击吸引强，避免复杂装饰抢主体
+- 菜单配图：正面或45度角，突出菜品可识别性和真实食欲
+- 活动海报：主体和优惠信息分区，保留标题/价格/按钮区域
+- 套餐图：多个商品的主次、份量感、组合关系清楚
+- 招牌推荐图：主菜更近、更有记忆点，光线和道具强化门店招牌感
+
+要求：
+1. 商家没说某字段时，根据商品主体、美团场景和营销目的动态生成，不要留空或写"未指定"
+2. style 和 background 必须是本次商品专属方案，不同商品、不同图片类型应有不同风格和构图
+3. optimizedPrompt 必须是可直接发给生图模型的描述，不要带任何前缀说明
+4. 输出语言与商家输入保持一致（中文输入则全中文）
+5. 如果用户输入中包含"[系统预拆解的商家意图]"，只把其中的 imageType、mainSubject、marketingGoal、placement 当作确定性参考；style 和 background 必须继续根据动态风格/构图原则生成，除非商家原文明确指定风格
+6. 严禁返回 JSON 之外的任何字符`;
+
+  // 状态：当前待确认的需求
+  let pendingRequirement = null;
+
+  // 解析需求（一次 GLM-4-Flash 调用，同时返回智能拆解字段 + 优化后的生图 prompt）
+  async function parseRequirements(userPrompt) {
+    toggleDebugDrawer(true);
+    clearDebugState();
+    optimizerDebugState.userPrompt = userPrompt;
+    addDebugLog('开始需求理解', `收到用户输入：${userPrompt}\n长度 ${userPrompt.length} 字符。`);
+
+    const savedRequirementPrompt = localStorage.getItem('requirement_parser_prompt');
+    const savedOptimizeKey = localStorage.getItem('prompt_optimizer_api_key');
+    const systemPrompt = buildRequirementSystemPrompt(savedRequirementPrompt || DEFAULT_REQUIREMENT_PROMPT);
+    const apiKey = savedOptimizeKey || OPTIMIZE_API_KEY;
+
+    optimizerDebugState.systemPrompt = systemPrompt;
+    optimizerDebugState.source = savedRequirementPrompt ? '后台自定义需求解析 prompt' : '默认需求解析 prompt';
+    optimizerDebugState.apiKeyMasked = maskApiKey(apiKey);
+    addDebugLog('读取配置', `系统提示词来源：${optimizerDebugState.source}\n系统提示词长度：${systemPrompt.length} 字符\nKey 来源：${savedOptimizeKey ? '后台自定义' : '内置默认'}`);
+
+    try {
+      const requestPayload = {
+        model: 'glm-4-flash',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ]
+      };
+      optimizerDebugState.requestPayload = JSON.stringify(requestPayload, null, 2);
+      addDebugLog('发起请求', `POST ${optimizerDebugState.endpoint}\n模型：${optimizerDebugState.model}\n要求严格 JSON 输出。`);
+
+      const res = await fetchWithTimeout('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(requestPayload)
+      }, 30000);
+
+      optimizerDebugState.responseStatus = `${res.status} ${res.statusText}`;
+      addDebugLog('收到响应', `HTTP ${res.status} ${res.statusText || ''}`.trim(), res.ok ? 'success' : 'error');
+
+      const rawText = await res.text();
+      optimizerDebugState.responseBody = rawText || '-';
+
+      if (!res.ok) {
+        let msg = `请求失败 (${res.status})`;
+        try {
+          const e = rawText ? JSON.parse(rawText) : null;
+          if (e?.error?.message) msg = e.error.message;
+        } catch {}
+        optimizerDebugState.error = msg;
+        addDebugLog('接口报错', msg, 'error');
+        throw new Error(msg);
+      }
+
+      let data;
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch {
+        throw new Error('响应不是合法 JSON');
+      }
+      if (data.error) throw new Error(data.error.message || '需求解析出错');
+
+      const content = data.choices?.[0]?.message?.content;
+      if (!content) throw new Error('返回内容为空');
+      optimizerDebugState.optimizedPrompt = content;
+
+      const parsed = extractJsonSafe(content);
+      if (!parsed) {
+        addDebugLog('JSON 解析失败', '模型未按 JSON 格式输出，请检查提示词。原始内容已写入调试浮窗。', 'error');
+        throw new Error('模型未按 JSON 格式输出，无法展示需求确认卡');
+      }
+
+      // 兼容字段缺失：补默认值
+      const req = {
+        imageType: parsed.imageType || '未指定',
+        mainSubject: parsed.mainSubject || '未指定',
+        marketingGoal: parsed.marketingGoal || '未指定',
+        placement: parsed.placement || parsed.scene || '未指定',
+        scene: parsed.scene || '未指定',
+        style: parsed.style || '未指定',
+        background: parsed.background || '未指定',
+        avoid: parsed.avoid || '未指定',
+        optimizedPrompt: parsed.optimizedPrompt || userPrompt,
+      };
+      addDebugLog('Layer 1 解析成功', `已提取智能拆解字段 + 预览提示词（${req.optimizedPrompt.length} 字符）。\n确认后将由 Layer 2 编译为最终生图提示词。`, 'success');
+      return req;
+    } catch (err) {
+      optimizerDebugState.error = err.message;
+      addDebugLog('需求理解失败', err.message, 'error');
+      throw err;
+    } finally {
+      renderDebugDrawer();
+    }
+  }
+
+  function buildRequirementSystemPrompt(basePrompt) {
+    return `${basePrompt}
+
+【运行时补充约束】
+- 如果后台配置中包含固定的"风格参考表"或"构图参考表"，只能把它当作灵感示例，不能机械按品类映射输出固定风格。
+- 本次必须根据商品主体、美团商家场景、营销目的、图片类型动态生成 style 和 background。
+- 后台配置中的动态风格/构图规则优先级高于"[系统预拆解的商家意图]"。
+- "[系统预拆解的商家意图]"只用于辅助确认主体商品、图片类型、营销目的和使用位置。
+- 如果预拆解中没有 style 或 background，必须根据商品主体、美团场景和营销目的生成本次专属的差异化风格和背景，不要默认输出"真实商业摄影"。
+- 除非商家原文明确要求真实摄影，否则不要把所有商品都写成"真实商业摄影风格"。`;
+  }
+
+  // 安全提取 JSON：兼容模型返回 ```json ... ``` 包裹或附带前后文
+  function extractJsonSafe(text) {
+    if (!text) return null;
+    const trimmed = text.trim();
+    // 1) 直接 parse
+    try { return JSON.parse(trimmed); } catch {}
+    // 2) 提取 ```json ... ``` 或 ``` ... ```
+    const fence = trimmed.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+    if (fence) {
+      try { return JSON.parse(fence[1]); } catch {}
+    }
+    // 3) 提取第一个 { 到最后一个 } 的内容
+    const first = trimmed.indexOf('{');
+    const last = trimmed.lastIndexOf('}');
+    if (first !== -1 && last > first) {
+      try { return JSON.parse(trimmed.slice(first, last + 1)); } catch {}
+    }
+    return null;
+  }
+
+  async function optimizePromptText(prompt) {
+    toggleDebugDrawer(true);
+    clearDebugState();
+    optimizerDebugState.userPrompt = prompt;
+    addDebugLog('开始优化', `收到用户输入提示词，长度 ${prompt.length} 字符。`);
+
+    const savedCompilePrompt = localStorage.getItem('prompt_compile_prompt');
+    const savedOptimizeKey = localStorage.getItem('prompt_optimizer_api_key');
+    const systemPrompt = savedCompilePrompt || DEFAULT_COMPILE_PROMPT;
+    const apiKey = savedOptimizeKey || OPTIMIZE_API_KEY;
+    const systemPromptSource = savedCompilePrompt ? 'localStorage 自定义配置' : '默认编译提示词';
+
+    optimizerDebugState.source = systemPromptSource;
+    optimizerDebugState.systemPrompt = systemPrompt;
+    optimizerDebugState.apiKeyMasked = maskApiKey(apiKey);
+    addDebugLog('读取配置', `系统提示词来源：${systemPromptSource}\n系统提示词长度：${systemPrompt.length} 字符\n优化 Key 来源：${savedOptimizeKey ? '后台自定义 Key' : '内置默认 Key'}`);
+
+    try {
+      const requestPayload = {
+        model: 'glm-4-flash',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: prompt }
+        ]
+      };
+      optimizerDebugState.requestPayload = JSON.stringify(requestPayload, null, 2);
+      addDebugLog('发起请求', `POST ${optimizerDebugState.endpoint}\n模型：${optimizerDebugState.model}\n已写入 system 和 user 两段 messages。`);
+
+      const res = await fetchWithTimeout('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(requestPayload)
+      }, 30000);
+
+      optimizerDebugState.responseStatus = `${res.status} ${res.statusText}`;
+      addDebugLog('收到响应', `HTTP ${res.status} ${res.statusText || ''}`.trim(), res.ok ? 'success' : 'error');
+
+      const rawText = await res.text();
+      optimizerDebugState.responseBody = rawText || '-';
+
+      if (!res.ok) {
+        let msg = `请求失败 (${res.status})`;
+        try {
+          const e = rawText ? JSON.parse(rawText) : null;
+          if (e?.error?.message) msg = e.error.message;
+        } catch {}
+        optimizerDebugState.error = msg;
+        addDebugLog('接口报错', msg, 'error');
+        throw new Error(msg);
+      }
+
+      let data;
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch {
+        optimizerDebugState.error = '响应不是合法 JSON';
+        addDebugLog('解析失败', '接口已返回，但响应不是合法 JSON。', 'error');
+        throw new Error('响应不是合法 JSON');
+      }
+
+      if (data.error) throw new Error(data.error.message || '优化出错');
+      const optimized = data.choices?.[0]?.message?.content;
+      if (!optimized) throw new Error('返回内容为空');
+      optimizerDebugState.optimizedPrompt = optimized;
+      addDebugLog('提取结果', `已从响应中读取优化后的提示词，长度 ${optimized.length} 字符。`, 'success');
+      addDebugLog('优化完成', '优化步骤完成，结果将直接进入生图流程。', 'success');
+      return optimized;
+    } catch (err) {
+      optimizerDebugState.error = err.message;
+      addDebugLog('优化失败', err.message, 'error');
+      throw err;
+    } finally {
+      renderDebugDrawer();
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeLightbox(e);
+      closeAdminPanel();
+      closeRequirementModal();
+      closeClarifyModal();
+    }
+  });
+</script>
+</body>
+</html>
